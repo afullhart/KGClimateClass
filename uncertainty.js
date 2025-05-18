@@ -439,4 +439,15 @@ function main_fn(str_obj){
 var im_ic = ee.ImageCollection(model_list.map(main_fn));
 print(im_ic);
 
+function class_count_fn(class_num_obj){
+  var class_num = ee.Number(class_num_obj);
+  var im_ci
+  
+  var class_im = null;
+  return class_im;
+}
+
 Map.addLayer(im_ic.first());
+print(im_ic.first());
+
+
