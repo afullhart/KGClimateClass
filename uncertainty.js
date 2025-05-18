@@ -436,18 +436,31 @@ function main_fn(str_obj){
   return type_im;
 }
 
-var im_ic = ee.ImageCollection(model_list.map(main_fn));
-print(im_ic);
+var model_ic = ee.ImageCollection(model_list.map(main_fn));
 
-function class_count_fn(class_num_obj){
+
+Map.addLayer(model_ic.first());
+print(model_ic.first());
+
+
+var class_seq = ee.List.sequence(1, 30);
+function uncert_fn(class_num_obj){
   var class_num = ee.Number(class_num_obj);
-  var im_ci
-  
-  var class_im = null;
-  return class_im;
+  function check_fn(im_obj){
+    var im = ee.Image(im_obj);
+    var check_im = im.eq(class_num);
+    return check_im;
+  }
+  var check_ic = ee.ImageCollection(model_ic.map(check_fn));
+  var count_im = check_ic.reduce(ee.Reducer.sum());
+  var uncert_im = count_im.divide(33.0).multiply(100.0);
+  return uncert_im;
 }
 
-Map.addLayer(im_ic.first());
-print(im_ic.first());
+var uncert_ic = ee.ImageCollection(class_seq.map(uncert_fn))
 
+
+
+Map.addLayer(uncert_ic.first());
+print(uncert_ic.first());
 
