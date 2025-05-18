@@ -451,7 +451,21 @@ function uncert_fn(class_num_obj){
     var check_im = im.eq(class_num);
     return check_im;
   }
+  
   var check_ic = ee.ImageCollection(model_ic.map(check_fn));
+  
+  
+  
+  function change_band_name_fn(im){
+    var bLabel = im.bandNames().get(0);
+    return im.select([bLabel],['B1']);
+  }
+  
+  var check_ic = ee.ImageCollection(check_ic.map(change_band_name_fn));
+  var check_ic = ee.ImageCollection(check_ic.cast({B1:'int64'}, ['B1']));
+  
+  
+  
   var count_im = check_ic.reduce(ee.Reducer.sum());
   var uncert_im = count_im.divide(33.0).multiply(100.0);
   return uncert_im;
@@ -461,6 +475,6 @@ var uncert_ic = ee.ImageCollection(class_seq.map(uncert_fn))
 
 
 
-Map.addLayer(uncert_ic.first());
+Map.addLayer(ee.Image(uncert_ic.toList(999).get(6)));
 print(uncert_ic.first());
 
