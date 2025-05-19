@@ -1,7 +1,7 @@
 var ic = ee.ImageCollection("NASA/NEX-DCP30");
 
 
-var selection_list = ee.List([[[2000, 2029], 'CCSM4', 'rcp45']]);
+var selection_list = ee.List([[2000, 'CCSM4', 'rcp45']]);
 
 var ndays_months = ee.List([31, 28.25, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]);
 var order_months = ee.List([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
@@ -11,13 +11,11 @@ var wintr_months = ee.List([1, 2, 3, 10, 11, 12]);
 
 
 var in_list = ee.List(selection_list.get(0));
-var start_year = ee.Number(ee.List(in_list.get(0)).get(0));
-var end_year = ee.Number(ee.List(in_list.get(0)).get(1));
+var start_year = ee.Number(in_list.get(0));
 var model = ee.String(in_list.get(1));
 var scenario = ee.String(in_list.get(2));
 print(in_list);
 print(start_year);
-print(end_year);
 print(model);
 print(scenario);
 
@@ -26,12 +24,9 @@ print(scenario);
 function main_fn(selection_obj){
 
   var in_list = ee.List(selection_obj);
-  var start_year = ee.Number(ee.List(in_list.get(0)).get(0));
-  var end_year = ee.Number(ee.List(in_list.get(0)).get(1));
+  var start_year = ee.Number(in_list.get(0));
   var model = ee.String(in_list.get(1));
   var scenario = ee.String(in_list.get(2));
-
-  var test_list = ee.List([start_year, end_year, model, scenario]);
 
   var modelfilter = ee.Filter.or(
     ee.Filter.eq('scenario', 'historical'),
@@ -40,7 +35,7 @@ function main_fn(selection_obj){
   var icB = icA.filter(ee.Filter.eq('model', model));
   
   var start = ee.Date.fromYMD(start_year, 1, 1);
-  var end = ee.Date.fromYMD(end_year.add(1), 1, 1);
+  var end = ee.Date.fromYMD(start_year.add(30), 1, 1);
   var year_ic = icB.filterDate(start, end);
   
   function make_p_ic_fn(month){
@@ -461,24 +456,25 @@ function main_fn(selection_obj){
 
 
 
-// var selection_ic = ee.ImageCollection(selection_list.map(main_fn));
-// Map.addLayer(selection_ic.first(), {min:1, max:30});
+var selection_ic = ee.ImageCollection(selection_list.map(main_fn));
+Map.addLayer(selection_ic.first(), {min:1, max:30});
 
 
 
-function renderDateRange(selection_list_obj){
-  var selection = ee.List(selection_list_obj);
-  var selection_ic = ee.ImageCollection(selection.map(main_fn));
-  var selection_im = selection_ic.first();
-  Map.addLayer(selection_im, {min:1, max:30});
+function renderDateRange(yr_list_obj){
+  Map.layers().remove(Map.layers().get(0));
+  
+  var dateRng = ee.DateRange(yr_list_obj);
+  var dateFilter = dataset.filter(ee.Filter.date(dateRng.start(), dateRng.end())).first();
+  var crop_im = dateFilter.select('cropland');
+  var image = crop_im.clip(countyShp);
+  Map.addLayer(image, {}, 'crops');
 }
 
-function renderSlider(selection_list_obj){
-  var startSliderDate = ee.Date('1997-01-01');
-  var endSliderDate = ee.Date('2025-01-01');
+function renderSlider(yr_list_obj){
   var slider = ui.DateSlider({
-    start:startSliderDate, 
-    end:endSliderDate, 
+    start:ee.Date('1990'), 
+    end:ee.Date('2070'), 
     period:365,
     onChange:renderDateRange
   });
@@ -486,8 +482,10 @@ function renderSlider(selection_list_obj){
 }
 
 
-selection_list.evaluate(renderSlider);
+var year_range_list = ee.List(selection_list.get(0)).get(0);
+print(year_range_list);
 
+ee.List(selection).evaluate(renderSlider);
 
 
 
