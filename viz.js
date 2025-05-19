@@ -461,6 +461,5 @@ function main_fn(selection_obj){
 
 
 var selection_ic = ee.ImageCollection(selection_list.map(main_fn));
-Map.addLayer(selection_ic.first(), );
-
+Map.addLayer(selection_ic.first(), {min:1, max:30});
 
