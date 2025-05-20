@@ -457,8 +457,10 @@ function main_fn(selection_obj){
 }
 
 
+
 //var selection_ic = ee.ImageCollection(selection_list.map(main_fn));
 //Map.addLayer(selection_ic.first(), {min:1, max:30});
+
 
 
 function renderDateRange(dateRng_obj){
@@ -476,9 +478,9 @@ function renderDateRange(dateRng_obj){
 
 function renderSlider(yrList_obj){
   var slider = ui.DateSlider({
-    start:ee.Date('1990'), 
-    end:ee.Date('2071'), 
-    period:365,
+    start:ee.Date('1976'), 
+    end:ee.Date('2066'), 
+    period:365*10,
     onChange:renderDateRange,
     style:{
       height:'50px',
@@ -494,4 +496,5 @@ function renderSlider(yrList_obj){
 var year_num = ee.Number(ee.List(selection_list.get(0)).get(0));
 print(year_num);
 ee.List([year_num, year_num.add(30)]).evaluate(renderSlider);
+
 
