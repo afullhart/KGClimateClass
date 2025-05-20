@@ -477,9 +477,14 @@ function renderDateRange(dateRng_obj){
 function renderSlider(yrList_obj){
   var slider = ui.DateSlider({
     start:ee.Date('1990'), 
-    end:ee.Date('2070'), 
+    end:ee.Date('2071'), 
     period:365,
-    onChange:renderDateRange
+    onChange:renderDateRange,
+    style:{
+      height:'50px',
+      width:'500px',
+      padding:'10px'
+    }
   });
   Map.add(slider);
 }
