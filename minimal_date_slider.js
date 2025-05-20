@@ -2,6 +2,8 @@ var ic = ee.ImageCollection("NASA/NEX-DCP30");
 
 
 var selection_list = ee.List([[2000, 'CCSM4', 'rcp45']]);
+var model = ee.String(selection_list.get(1));
+var scenario = ee.String(selection_list.get(2));
 
 var ndays_months = ee.List([31, 28.25, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]);
 var order_months = ee.List([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
@@ -14,10 +16,10 @@ var in_list = ee.List(selection_list.get(0));
 var start_year = ee.Number(in_list.get(0));
 var model = ee.String(in_list.get(1));
 var scenario = ee.String(in_list.get(2));
-print(in_list);
-print(start_year);
-print(model);
-print(scenario);
+// print(in_list);
+// print(start_year);
+// print(model);
+// print(scenario);
 
 
 
@@ -34,8 +36,8 @@ function main_fn(selection_obj){
   var icA = ic.filter(modelfilter);
   var icB = icA.filter(ee.Filter.eq('model', model));
   
-  var start = ee.Date.fromYMD(start_year, 1, 1);
-  var end = ee.Date.fromYMD(start_year.add(30), 1, 1);
+  var start = ee.Date.fromYMD(ee.Number(start_year), 1, 1);
+  var end = ee.Date.fromYMD(ee.Number(start_year).add(30), 1, 1);
   var year_ic = icB.filterDate(start, end);
   
   function make_p_ic_fn(month){
@@ -461,33 +463,31 @@ Map.addLayer(selection_ic.first(), {min:1, max:30});
 
 
 
-function renderDateRange(yr_list_obj){
+function renderDateRange(dateRng_obj){
   Map.layers().remove(Map.layers().get(0));
-  
-  var dateRng = ee.DateRange(yr_list_obj);
-  var dateFilter = dataset.filter(ee.Filter.date(dateRng.start(), dateRng.end())).first();
-  var crop_im = dateFilter.select('cropland');
-  var image = crop_im.clip(countyShp);
-  Map.addLayer(image, {}, 'crops');
+  var yr = ee.Number.parse(ee.Date(dateRng_obj.start()).format('yyyy'));
+  var nested_selection_list = ee.List([[yr, model, scenario]]);
+  print(nested_selection_list);
+  var selection_ic = ee.ImageCollection(nested_selection_list.map(main_fn));
+  var image = selection_ic.first();
+  Map.addLayer(image, {min:1, max:30});
 }
 
-function renderSlider(yr_list_obj){
+
+
+function renderSlider(yrList_obj){
   var slider = ui.DateSlider({
     start:ee.Date('1990'), 
     end:ee.Date('2070'), 
-    period:365,
+    period:365*30,
     onChange:renderDateRange
   });
   Map.add(slider);
 }
 
 
-var year_range_list = ee.List(selection_list.get(0)).get(0);
-print(year_range_list);
 
-ee.List(selection).evaluate(renderSlider);
-
-
-
-
+var year_num = ee.Number(ee.List(selection_list.get(0)).get(0));
+print(year_num);
+ee.List([year_num, year_num.add(30)]).evaluate(renderSlider);
 
