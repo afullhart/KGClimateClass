@@ -457,14 +457,13 @@ function main_fn(selection_obj){
 }
 
 
-
-var selection_ic = ee.ImageCollection(selection_list.map(main_fn));
-Map.addLayer(selection_ic.first(), {min:1, max:30});
-
+//var selection_ic = ee.ImageCollection(selection_list.map(main_fn));
+//Map.addLayer(selection_ic.first(), {min:1, max:30});
 
 
 function renderDateRange(dateRng_obj){
   Map.layers().remove(Map.layers().get(0));
+  print(dateRng_obj);
   var yr = ee.Number.parse(ee.Date(dateRng_obj.start()).format('yyyy'));
   var nested_selection_list = ee.List([[yr, model, scenario]]);
   print(nested_selection_list);
@@ -479,7 +478,7 @@ function renderSlider(yrList_obj){
   var slider = ui.DateSlider({
     start:ee.Date('1990'), 
     end:ee.Date('2070'), 
-    period:365*30,
+    period:365,
     onChange:renderDateRange
   });
   Map.add(slider);
