@@ -16,10 +16,6 @@ var in_list = ee.List(selection_list.get(0));
 var start_year = ee.Number(in_list.get(0));
 var model = ee.String(in_list.get(1));
 var scenario = ee.String(in_list.get(2));
-// print(in_list);
-// print(start_year);
-// print(model);
-// print(scenario);
 
 
 
@@ -452,8 +448,6 @@ function main_fn(selection_obj){
   var type_im = type_ic.reduce(ee.Reducer.sum());
 
   return type_im;
-  return test_list;
-  
 }
 
 
@@ -496,5 +490,3 @@ function renderSlider(yrList_obj){
 var year_num = ee.Number(ee.List(selection_list.get(0)).get(0));
 print(year_num);
 ee.List([year_num, year_num.add(30)]).evaluate(renderSlider);
-
-
