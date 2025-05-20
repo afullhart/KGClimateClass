@@ -453,6 +453,7 @@ function main_fn(selection_obj){
 
 function renderModel(model_i_obj){
   Map.layers().remove(Map.layers().get(0));
+  Map.widgets().remove(Map.widgets().get(1));
   var model_i = ee.Number(model_i_obj).subtract(1);
   var model_str = ee.String(model_list.get(model_i));
   var nested_selection_list = ee.List([[year, model_str, scenario]]);
@@ -460,6 +461,13 @@ function renderModel(model_i_obj){
   var selection_ic = ee.ImageCollection(nested_selection_list.map(main_fn));
   var image = selection_ic.first();
   Map.addLayer(image, {min:1, max:30});
+  
+  var label = ui.Label("GCM: " + model_str.getInfo());
+  var panel = ui.Panel({
+    widgets: [label],
+    layout: ui.Panel.LAYOUT_VERTICAL
+  });
+  Map.add(panel);
 }
 
 
@@ -480,4 +488,5 @@ function renderModelSlider(model_i_obj){
 }
 
 
-ee.List([1]).evaluate(renderModelSlider);
+ee.List([6]).evaluate(renderModelSlider);
+
