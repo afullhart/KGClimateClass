@@ -464,9 +464,15 @@ function renderModel(model_i_obj){
   
   var label = ui.Label("GCM: " + model_str.getInfo());
   var panel = ui.Panel({
-    widgets: [label],
-    layout: ui.Panel.LAYOUT_VERTICAL
+    widgets:[label],
+    layout:ui.Panel.LAYOUT_VERTICAL
   });
+  
+  panel.style().set({
+    width:'200px',
+    position:'middle-left'
+  });
+  
   Map.add(panel);
 }
 
@@ -481,12 +487,13 @@ function renderModelSlider(model_i_obj){
     style:{
       height:'50px',
       width:'500px',
-      padding:'10px'
+      padding:'10px',
+      position:'bottom-left'
     }
   });
   Map.add(slider);
 }
 
 
-ee.List([6]).evaluate(renderModelSlider);
 
+ee.List([6]).evaluate(renderModelSlider);
