@@ -1,7 +1,11 @@
 var ic = ee.ImageCollection("NASA/NEX-DCP30");
 
+var model_list = ee.List(['ACCESS1-0', 'bcc-csm1-1', 'bcc-csm1-1-m', 'BNU-ESM', 'CanESM2', 'CCSM4', 'CESM1-BGC', 'CESM1-CAM5', 'CMCC-CM', 'CNRM-CM5', 'CSIRO-Mk3-6-0', 'FGOALS-g2', 'FIO-ESM', 'GFDL-CM3', 'GFDL-ESM2G', 'GFDL-ESM2M', 'GISS-E2-H-CC', 'GISS-E2-R', 'GISS-E2-R-CC', 'HadGEM2-AO', 'HadGEM2-CC', 'HadGEM2-ES', 'inmcm4', 'IPSL-CM5A-LR', 'IPSL-CM5A-MR', 'IPSL-CM5B-LR', 'MIROC5', 'MIROC-ESM', 'MIROC-ESM-CHEM', 'MPI-ESM-LR', 'MPI-ESM-MR', 'MRI-CGCM3', 'NorESM1-M']);
 
-var selection_list = ee.List([[[2000, 2029], 'CCSM4', 'rcp45']]);
+var selection_list = ee.List([[2000, 'CCSM4', 'rcp45']]);
+var year = ee.Number(ee.List(selection_list.get(0)).get(0));
+var model = ee.String('CCSM4');
+var scenario = ee.String(ee.List(selection_list.get(0)).get(2));
 
 var ndays_months = ee.List([31, 28.25, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]);
 var order_months = ee.List([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
@@ -10,28 +14,12 @@ var wintr_months = ee.List([1, 2, 3, 10, 11, 12]);
 
 
 
-var in_list = ee.List(selection_list.get(0));
-var start_year = ee.Number(ee.List(in_list.get(0)).get(0));
-var end_year = ee.Number(ee.List(in_list.get(0)).get(1));
-var model = ee.String(in_list.get(1));
-var scenario = ee.String(in_list.get(2));
-print(in_list);
-print(start_year);
-print(end_year);
-print(model);
-print(scenario);
-
-
-
 function main_fn(selection_obj){
 
   var in_list = ee.List(selection_obj);
-  var start_year = ee.Number(ee.List(in_list.get(0)).get(0));
-  var end_year = ee.Number(ee.List(in_list.get(0)).get(1));
+  var start_year = ee.Number(in_list.get(0));
   var model = ee.String(in_list.get(1));
   var scenario = ee.String(in_list.get(2));
-
-  var test_list = ee.List([start_year, end_year, model, scenario]);
 
   var modelfilter = ee.Filter.or(
     ee.Filter.eq('scenario', 'historical'),
@@ -39,8 +27,8 @@ function main_fn(selection_obj){
   var icA = ic.filter(modelfilter);
   var icB = icA.filter(ee.Filter.eq('model', model));
   
-  var start = ee.Date.fromYMD(start_year, 1, 1);
-  var end = ee.Date.fromYMD(end_year.add(1), 1, 1);
+  var start = ee.Date.fromYMD(ee.Number(start_year), 1, 1);
+  var end = ee.Date.fromYMD(ee.Number(start_year).add(30), 1, 1);
   var year_ic = icB.filterDate(start, end);
   
   function make_p_ic_fn(month){
@@ -455,11 +443,102 @@ function main_fn(selection_obj){
   var type_im = type_ic.reduce(ee.Reducer.sum());
 
   return type_im;
-  return test_list;
-  
 }
 
 
-var selection_ic = ee.ImageCollection(selection_list.map(main_fn));
-Map.addLayer(selection_ic.first(), {min:1, max:30});
+
+//var selection_ic = ee.ImageCollection(selection_list.map(main_fn));
+//Map.addLayer(selection_ic.first(), {min:1, max:30});
+
+
+
+function renderModel(model_i_obj){
+  Map.layers().remove(Map.layers().get(0));
+  Map.widgets().remove(Map.widgets().get(1));
+  var model_i = ee.Number(model_i_obj).subtract(1);
+  var model_str = ee.String(model_list.get(model_i));
+  var nested_selection_list = ee.List([[year, model_str, scenario]]);
+  print('renderModel');
+  print(nested_selection_list);
+  var selection_ic = ee.ImageCollection(nested_selection_list.map(main_fn));
+  var image = selection_ic.first();
+  Map.addLayer(image, {min:1, max:30});
+  
+  var label = ui.Label("GCM: " + model_str.getInfo());
+  var panel = ui.Panel({
+    widgets:[label],
+    layout:ui.Panel.LAYOUT_VERTICAL
+  });
+  
+  panel.style().set({
+    width:'200px',
+    position:'middle-left'
+  });
+  
+  Map.add(panel);
+}
+
+
+
+function renderModelSlider(model_i_obj){
+  var slider = ui.Slider({
+    min:1,
+    max:33,
+    step:1,
+    onChange:renderModel,
+    style:{
+      height:'50px',
+      width:'500px',
+      padding:'10px',
+      position:'bottom-left'
+    }
+  });
+  Map.add(slider);
+}
+
+
+ee.List([6]).evaluate(renderModelSlider);
+
+
+
+
+
+
+
+
+function renderDateRange(dateRng_obj){
+  Map.layers().remove(Map.layers().get(0));
+  var yr = ee.Number.parse(ee.Date(dateRng_obj.start()).format('yyyy'));
+  var nested_selection_list = ee.List([[yr, model, scenario]]);
+  print('renderDateRange');
+  print(nested_selection_list);
+  var selection_ic = ee.ImageCollection(nested_selection_list.map(main_fn));
+  var image = selection_ic.first();
+  Map.addLayer(image, {min:1, max:30});
+}
+
+
+
+function renderSlider(yrList_obj){
+  var slider = ui.DateSlider({
+    start:ee.Date('1976'), 
+    end:ee.Date('2066'), 
+    period:365*10,
+    onChange:renderDateRange,
+    style:{
+      height:'50px',
+      width:'500px',
+      padding:'10px'
+    }
+  });
+  Map.add(slider);
+}
+
+
+
+var year_num = ee.Number(ee.List(selection_list.get(0)).get(0));
+print(year_num);
+ee.List([year_num, year_num.add(30)]).evaluate(renderSlider);
+
+
 
