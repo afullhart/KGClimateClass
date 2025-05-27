@@ -1,8 +1,10 @@
-var ic = ee.ImageCollection("NASA/NEX-DCP30");
+var ic = ee.ImageCollection('NASA/NEX-DCP30');
 
 var model_list = ee.List(['ACCESS1-0', 'bcc-csm1-1', 'bcc-csm1-1-m', 'BNU-ESM', 'CanESM2', 'CCSM4', 'CESM1-BGC', 'CESM1-CAM5', 'CMCC-CM', 'CNRM-CM5', 'CSIRO-Mk3-6-0', 'FGOALS-g2', 'FIO-ESM', 'GFDL-CM3', 'GFDL-ESM2G', 'GFDL-ESM2M', 'GISS-E2-H-CC', 'GISS-E2-R', 'GISS-E2-R-CC', 'HadGEM2-AO', 'HadGEM2-CC', 'HadGEM2-ES', 'inmcm4', 'IPSL-CM5A-LR', 'IPSL-CM5A-MR', 'IPSL-CM5B-LR', 'MIROC5', 'MIROC-ESM', 'MIROC-ESM-CHEM', 'MPI-ESM-LR', 'MPI-ESM-MR', 'MRI-CGCM3', 'NorESM1-M']);
+var dateRng_list = ee.List(['1970-1999', '1980-2009', '1990-2019', '2000-2029', '2010-2039', '2020-2049', '2030-2059', '2040-2069', '2050-2079', '2060-2089', '2070-2099']);
 
 var selection_list = ee.List([[2000, 'CCSM4', 'rcp45']]);
+
 var year = ee.Number(ee.List(selection_list.get(0)).get(0));
 var model = ee.String('CCSM4');
 var scenario = ee.String(ee.List(selection_list.get(0)).get(2));
@@ -445,100 +447,64 @@ function main_fn(selection_obj){
   return type_im;
 }
 
-
-
 //var selection_ic = ee.ImageCollection(selection_list.map(main_fn));
 //Map.addLayer(selection_ic.first(), {min:1, max:30});
 
 
 
-function renderModel(model_i_obj){
-  Map.layers().remove(Map.layers().get(0));
-  Map.widgets().remove(Map.widgets().get(1));
-  var model_i = ee.Number(model_i_obj).subtract(1);
-  var model_str = ee.String(model_list.get(model_i));
-  var nested_selection_list = ee.List([[year, model_str, scenario]]);
-  print('renderModel');
-  print(nested_selection_list);
-  var selection_ic = ee.ImageCollection(nested_selection_list.map(main_fn));
-  var image = selection_ic.first();
-  Map.addLayer(image, {min:1, max:30});
-  
-  var label = ui.Label("GCM: " + model_str.getInfo());
-  var panel = ui.Panel({
-    widgets:[label],
-    layout:ui.Panel.LAYOUT_VERTICAL
-  });
-  
-  panel.style().set({
-    width:'200px',
-    position:'middle-left'
-  });
-  
-  Map.add(panel);
-}
+var date_global = 2000;
+var model_global = 'CCSM4';
 
-
-
-function renderModelSlider(model_i_obj){
-  var slider = ui.Slider({
-    min:1,
-    max:33,
-    step:1,
-    onChange:renderModel,
-    style:{
-      height:'50px',
-      width:'500px',
-      padding:'10px',
-      position:'bottom-left'
-    }
-  });
-  Map.add(slider);
-}
-
-
-ee.List([6]).evaluate(renderModelSlider);
-
-
-
-
-
-
-
-
-function renderDateRange(dateRng_obj){
-  Map.layers().remove(Map.layers().get(0));
-  var yr = ee.Number.parse(ee.Date(dateRng_obj.start()).format('yyyy'));
-  var nested_selection_list = ee.List([[yr, model, scenario]]);
-  print('renderDateRange');
+function renderModel(model_obj){
+  Map.layers().reset();
+  var model_str = ee.String(model_obj);
+  model_global = model_str;
+  var nested_selection_list = ee.List([[date_global, model_str, scenario]]);
   print(nested_selection_list);
   var selection_ic = ee.ImageCollection(nested_selection_list.map(main_fn));
   var image = selection_ic.first();
   Map.addLayer(image, {min:1, max:30});
 }
 
+var renderModelDropdown = ui.Select({
+  items:model_list.getInfo(), 
+  placeholder:'Select a GCM', 
+  onChange:renderModel
+});
+
+var panelStyle = {
+  backgroundColor:'pink'
+};
+
+var leftPanel = ui.Panel({style:panelStyle});
+leftPanel.add(renderModelDropdown);
+ui.root.insert(0, leftPanel);
 
 
-function renderSlider(yrList_obj){
-  var slider = ui.DateSlider({
-    start:ee.Date('1976'), 
-    end:ee.Date('2066'), 
-    period:365*10,
-    onChange:renderDateRange,
-    style:{
-      height:'50px',
-      width:'500px',
-      padding:'10px'
-    }
-  });
-  Map.add(slider);
+
+function renderDateRng(date_str_obj){
+  Map.layers().reset();
+  var year = parseInt(ee.String(date_str_obj).getInfo().split('-')[0]);
+  date_global = year
+  var nested_selection_list = ee.List([[year, model_global, scenario]]);
+  print(nested_selection_list);
+  var selection_ic = ee.ImageCollection(nested_selection_list.map(main_fn));
+  var image = selection_ic.first();
+  Map.addLayer(image, {min:1, max:30});
 }
 
+var renderDateDropdown = ui.Select({
+  items:dateRng_list.getInfo(), 
+  placeholder:'Select Date Range', 
+  onChange:renderDateRng
+});
 
+var panelStyle = {
+  backgroundColor:'pink'
+};
 
-var year_num = ee.Number(ee.List(selection_list.get(0)).get(0));
-print(year_num);
-ee.List([year_num, year_num.add(30)]).evaluate(renderSlider);
-
+var leftPanel = ui.Panel({style:panelStyle});
+leftPanel.add(renderDateDropdown);
+ui.root.insert(1, leftPanel);
 
 
