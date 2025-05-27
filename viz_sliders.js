@@ -1,5 +1,6 @@
 var ic = ee.ImageCollection('NASA/NEX-DCP30');
 
+var scenario_list = ee.List(['rcp26', 'rcp45', 'rcp60', 'rcp85']);
 var model_list = ee.List(['ACCESS1-0', 'bcc-csm1-1', 'bcc-csm1-1-m', 'BNU-ESM', 'CanESM2', 'CCSM4', 'CESM1-BGC', 'CESM1-CAM5', 'CMCC-CM', 'CNRM-CM5', 'CSIRO-Mk3-6-0', 'FGOALS-g2', 'FIO-ESM', 'GFDL-CM3', 'GFDL-ESM2G', 'GFDL-ESM2M', 'GISS-E2-H-CC', 'GISS-E2-R', 'GISS-E2-R-CC', 'HadGEM2-AO', 'HadGEM2-CC', 'HadGEM2-ES', 'inmcm4', 'IPSL-CM5A-LR', 'IPSL-CM5A-MR', 'IPSL-CM5B-LR', 'MIROC5', 'MIROC-ESM', 'MIROC-ESM-CHEM', 'MPI-ESM-LR', 'MPI-ESM-MR', 'MRI-CGCM3', 'NorESM1-M']);
 var dateRng_list = ee.List(['1970-1999', '1980-2009', '1990-2019', '2000-2029', '2010-2039', '2020-2049', '2030-2059', '2040-2069', '2050-2079', '2060-2089', '2070-2099']);
 
@@ -452,33 +453,72 @@ function main_fn(selection_obj){
 
 
 
-var date_global = 2000;
+var typePalette = [
+  '#0000FF', '#0078FF', '#46FAAA', '#FF0000', '#FF9696', '#F5A500', '#FFDC64',
+  '#FFFF00', '#C8C800', '#969600', '#96FF96', '#64C864', '#329632',
+  '#C8FF50', '#64FF50', '#32C800', '#FF00FF', '#C800C8', '#963296', '#966496',
+  '#AAAFFF', '#5A78DC', '#4B50B4', '#320087', '#00FFFF', '#37C8FF', '#007D7D', '#00465F',
+  '#B2B2B2', '#666666'
+];
+
+
+var singleBandVis = {
+  min: 1,
+  max: 30,
+  palette: typePalette
+};
+
+
+
+var scenario_global = 'rcp45';
 var model_global = 'CCSM4';
+var date_global = 2000;
+
+
+
+function renderScenario(scenario_obj){
+  Map.layers().reset();
+  var scenario_str = ee.String(scenario_obj);
+  scenario_global = scenario_str;
+  var nested_selection_list = ee.List([[date_global, model_global, scenario_str]]);
+  print(nested_selection_list);
+  var selection_ic = ee.ImageCollection(nested_selection_list.map(main_fn));
+  var image = selection_ic.first();
+  Map.addLayer(image, singleBandVis);
+}
+
+var renderScenarioDropdown = ui.Select({
+  items:scenario_list.getInfo(), 
+  placeholder:'Select Emissions', 
+  onChange:renderScenario
+});
+
+var leftPanel = ui.Panel();
+leftPanel.add(renderScenarioDropdown);
+ui.root.insert(0, leftPanel);
+
+
 
 function renderModel(model_obj){
   Map.layers().reset();
   var model_str = ee.String(model_obj);
   model_global = model_str;
-  var nested_selection_list = ee.List([[date_global, model_str, scenario]]);
+  var nested_selection_list = ee.List([[date_global, model_str, scenario_global]]);
   print(nested_selection_list);
   var selection_ic = ee.ImageCollection(nested_selection_list.map(main_fn));
   var image = selection_ic.first();
-  Map.addLayer(image, {min:1, max:30});
+  Map.addLayer(image, singleBandVis);
 }
 
 var renderModelDropdown = ui.Select({
   items:model_list.getInfo(), 
-  placeholder:'Select a GCM', 
+  placeholder:'Select GCM', 
   onChange:renderModel
 });
 
-var panelStyle = {
-  backgroundColor:'pink'
-};
-
-var leftPanel = ui.Panel({style:panelStyle});
+var leftPanel = ui.Panel();
 leftPanel.add(renderModelDropdown);
-ui.root.insert(0, leftPanel);
+ui.root.insert(1, leftPanel);
 
 
 
@@ -486,11 +526,11 @@ function renderDateRng(date_str_obj){
   Map.layers().reset();
   var year = parseInt(ee.String(date_str_obj).getInfo().split('-')[0]);
   date_global = year
-  var nested_selection_list = ee.List([[year, model_global, scenario]]);
+  var nested_selection_list = ee.List([[year, model_global, scenario_global]]);
   print(nested_selection_list);
   var selection_ic = ee.ImageCollection(nested_selection_list.map(main_fn));
   var image = selection_ic.first();
-  Map.addLayer(image, {min:1, max:30});
+  Map.addLayer(image, singleBandVis);
 }
 
 var renderDateDropdown = ui.Select({
@@ -499,12 +539,78 @@ var renderDateDropdown = ui.Select({
   onChange:renderDateRng
 });
 
-var panelStyle = {
-  backgroundColor:'pink'
-};
-
-var leftPanel = ui.Panel({style:panelStyle});
+var leftPanel = ui.Panel();
 leftPanel.add(renderDateDropdown);
-ui.root.insert(1, leftPanel);
+ui.root.insert(2, leftPanel);
 
+
+
+////////////////////////////////////////
+//
+// Create a panel to hold the map legend
+
+var legend = ui.Panel({
+  style: {
+    position: 'bottom-right',
+    padding: '8px 15px'
+  }
+});
+
+// Title for legend
+var legendTitle = ui.Label({
+  value: 'Köppen Climate Classification',
+  style: {
+    fontWeight: 'bold',
+    fontSize: '14px',
+    margin: '0 0 4px 0',
+    padding: '0'
+  }
+});
+
+legend.add(legendTitle);
+
+// Define the classes and colors
+var typeLabels = [
+  'Af - Tropical, Rainforest', 'Am - Tropical, Monsoon', 'Aw - Tropical, Savanna',
+  'Bwh - Arid, Desert, Hot', 'Bwk - Arid, Desert, Cold', 'Bsh - Semi-Arid, Steppe, Hot', 'Bsk - Semi-Arid, Steppe, Cold',
+  'Csa - Temperate, Dry Summer, Hot Summer', 'Csb - Temperate, Dry Summer, Warm Summer', 'Csc - Temperate, Dry Summer, Cold Summer',
+  'Cwa - Temperate, Dry Winter, Hot Summer', 'Cwb - Temperate, Dry Winter, Warm Summer', 'Cwc - Temperate, Dry Winter, Cold Summer',
+  'Cfa - Temperate, No Dry Season, Hot Summer', 'Cfb - Temperate, No Dry Season, Warm Summer', 'Cfc - Temperate, No Dry Season, Cold Summer',
+  'Dsa - Cold, Dry Summer, Hot Summer', 'Dsb - Cold, Dry Summer, Warm Summer', 'Dsc - Cold, Dry Summer, Cold Summer', 'Dsd - Cold, Dry Summer, Very Cold Winter',
+  'Dwa - Cold, Dry Winter, Hot Summer', 'Dwb - Cold, Dry Winter, Warm Summer', 'Dwc - Cold, Dry Winter, Cold Summer', 'Dwd - Cold, Dry Winter, Very Cold Winter',
+  'Dfa - Cold, No Dry Season, Hot Summer', 'Dfb - Cold, No Dry Season, Warm summer', 'Dfc - Cold, No Dry season, Cold Summer', 'Dfd - Cold, No Dry Season, Very Cold Winter',
+  'Et - Polar Tundra', 'Ef - Polar Ice Cap'
+];
+
+
+// Loop to add legend items
+for (var i = 0; i < typeLabels.length; i++) {
+  var colorBox = ui.Label({
+    style: {
+      backgroundColor: typePalette[i],
+      padding: '8px',
+      margin: '2px',
+      border: '1px solid black'
+    }
+  });
+
+  var label = ui.Label({
+    value: typeLabels[i],
+    style: {
+      margin: '2px 0 2px 6px',
+      fontSize: '12px'
+    }
+  });
+
+  // Create a row with color and label
+  var row = ui.Panel({
+    widgets: [colorBox, label],
+    layout: ui.Panel.Layout.Flow('horizontal')
+  });
+
+  legend.add(row);
+}
+
+// Add legend to the map
+Map.add(legend);
 
