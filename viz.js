@@ -3,6 +3,7 @@ var ic = ee.ImageCollection('NASA/NEX-DCP30');
 var scenario_list = ee.List(['rcp26', 'rcp45', 'rcp60', 'rcp85']);
 var model_list = ee.List(['ACCESS1-0', 'bcc-csm1-1', 'bcc-csm1-1-m', 'BNU-ESM', 'CanESM2', 'CCSM4', 'CESM1-BGC', 'CESM1-CAM5', 'CMCC-CM', 'CNRM-CM5', 'CSIRO-Mk3-6-0', 'FGOALS-g2', 'FIO-ESM', 'GFDL-CM3', 'GFDL-ESM2G', 'GFDL-ESM2M', 'GISS-E2-H-CC', 'GISS-E2-R', 'GISS-E2-R-CC', 'HadGEM2-AO', 'HadGEM2-CC', 'HadGEM2-ES', 'inmcm4', 'IPSL-CM5A-LR', 'IPSL-CM5A-MR', 'IPSL-CM5B-LR', 'MIROC5', 'MIROC-ESM', 'MIROC-ESM-CHEM', 'MPI-ESM-LR', 'MPI-ESM-MR', 'MRI-CGCM3', 'NorESM1-M']);
 var dateRng_list = ee.List(['1970-1999', '1980-2009', '1990-2019', '2000-2029', '2010-2039', '2020-2049', '2030-2059', '2040-2069', '2050-2079', '2060-2089', '2070-2099']);
+var class_list = ee.List(['Af', 'Am', 'Aw', 'BWh', 'BWk', 'BSh', 'BSk', 'Csa', 'Csb', 'Csc', 'Cwa', 'Cwb', 'Cwc', 'Cfa', 'Cfb', 'Cfc', 'Dsa', 'Dsb', 'Dsc', 'Dsd', 'Dwa', 'Dwb', 'Dwc', 'Dwd', 'Dfa', 'Dfb', 'Dfc', 'Dfd', 'ET', 'EF']);
 
 var selection_list = ee.List([[2000, 'CCSM4', 'rcp45']]);
 
@@ -10,6 +11,7 @@ var year = ee.Number(ee.List(selection_list.get(0)).get(0));
 var model = ee.String('CCSM4');
 var scenario = ee.String(ee.List(selection_list.get(0)).get(2));
 
+var class_seq_list = ee.List.sequence(1, 30);
 var ndays_months = ee.List([31, 28.25, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]);
 var order_months = ee.List([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
 var summr_months = ee.List([4, 5, 6, 7, 8, 9]);
@@ -475,6 +477,11 @@ var model_global = 'CCSM4';
 var date_global = 2000;
 
 
+////////////////////////////////////////
+//
+// Scenario Drop Down
+
+
 
 function renderScenario(scenario_obj){
   Map.layers().reset();
@@ -497,6 +504,10 @@ var leftPanel = ui.Panel();
 leftPanel.add(renderScenarioDropdown);
 ui.root.insert(0, leftPanel);
 
+
+////////////////////////////////////////
+//
+// Model Drop-Down
 
 
 function renderModel(model_obj){
@@ -521,6 +532,10 @@ leftPanel.add(renderModelDropdown);
 ui.root.insert(1, leftPanel);
 
 
+////////////////////////////////////////
+//
+// Date Range Drop-Down
+
 
 function renderDateRng(date_str_obj){
   Map.layers().reset();
@@ -544,10 +559,73 @@ leftPanel.add(renderDateDropdown);
 ui.root.insert(2, leftPanel);
 
 
+////////////////////////////////////////
+//
+// Uncertainty Drop-Down
+
+
+function renderUncertainty(class_str_obj){
+  
+  Map.layers().reset();
+  
+  var selections = [];
+  for (var i = 0; i < model_list.size().getInfo(); i++){
+    selections.push([date_global, model_list.get(i).getInfo(), scenario_global]);
+  }
+
+  var uncert_list = ee.List(selections);
+  var model_ic = ee.ImageCollection(uncert_list.map(main_fn));
+  
+  var class_str = ee.String(class_str_obj);
+  var selected_class_num = class_list.indexOf(class_str);
+  
+  function uncert_fn(class_num_obj){
+
+    var class_num = ee.Number(class_num_obj);
+    
+    function check_fn(im_obj){
+      var im = ee.Image(im_obj);
+      var check_im = im.eq(class_num);
+      return check_im;
+    }
+    
+    var check_ic = ee.ImageCollection(model_ic.map(check_fn));
+    
+    function change_band_name_fn(im){
+      var bLabel = im.bandNames().get(0);
+      return im.select([bLabel],['B1']);
+    }
+    
+    var check_ic = ee.ImageCollection(check_ic.map(change_band_name_fn));
+    var check_ic = ee.ImageCollection(check_ic.cast({B1:'int64'}, ['B1']));
+    var count_im = check_ic.reduce(ee.Reducer.sum());
+    var uncert_im = count_im.divide(33.0).multiply(100.0);
+    return uncert_im;
+  }
+  
+  var uncert_ic = ee.ImageCollection(class_seq_list.map(uncert_fn));
+  Map.addLayer(ee.Image(uncert_ic.toList(999).get(selected_class_num)), {min:0, max:100});
+}
+
+var renderUncertDropdown = ui.Select({
+  items:class_list.getInfo(), 
+  placeholder:'Select Uncertainty', 
+  onChange:renderUncertainty
+});
+
+var leftPanel = ui.Panel();
+leftPanel.add(renderUncertDropdown);
+ui.root.insert(3, leftPanel);
+
+
+
+
+
 
 ////////////////////////////////////////
 //
 // Create a panel to hold the map legend
+
 
 var legend = ui.Panel({
   style: {
@@ -613,4 +691,5 @@ for (var i = 0; i < typeLabels.length; i++) {
 
 // Add legend to the map
 Map.add(legend);
+
 
