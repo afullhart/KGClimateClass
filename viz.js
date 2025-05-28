@@ -472,9 +472,9 @@ var singleBandVis = {
 
 
 
-var scenario_global = 'rcp45';
-var model_global = 'CCSM4';
-var date_global = 2000;
+var scenario_global = ee.List(selection_list.get(0)).get(2).getInfo();
+var model_global = ee.List(selection_list.get(0)).get(1).getInfo();
+var date_global = ee.List(selection_list.get(0)).get(0).getInfo();
 
 
 ////////////////////////////////////////
@@ -604,7 +604,7 @@ function renderUncertainty(class_str_obj){
   }
   
   var uncert_ic = ee.ImageCollection(class_seq_list.map(uncert_fn));
-  Map.addLayer(ee.Image(uncert_ic.toList(999).get(selected_class_num)), {min:0, max:100});
+  Map.addLayer(ee.Image(uncert_ic.toList(999).get(selected_class_num)), {palette:['000000', '00FF00'], min:0, max:100});
 }
 
 var renderUncertDropdown = ui.Select({
@@ -693,3 +693,5 @@ for (var i = 0; i < typeLabels.length; i++) {
 Map.add(legend);
 
 
+
+var info_str = "The map will output"
