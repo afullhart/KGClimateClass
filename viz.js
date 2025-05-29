@@ -463,12 +463,16 @@ var typePalette = [
   '#B2B2B2', '#666666'
 ];
 
-
 var singleBandVis = {
   min: 1,
   max: 30,
   palette: typePalette
 };
+
+
+var widgetStyle = {
+  position:'bottom-center'
+}
 
 
 
@@ -482,7 +486,6 @@ var date_global = ee.List(selection_list.get(0)).get(0).getInfo();
 // Scenario Drop Down
 
 
-
 function renderScenario(scenario_obj){
   Map.layers().reset();
   var scenario_str = ee.String(scenario_obj);
@@ -494,15 +497,12 @@ function renderScenario(scenario_obj){
   Map.addLayer(image, singleBandVis);
 }
 
-var renderScenarioDropdown = ui.Select({
+var scenarioDrop = ui.Select({
   items:scenario_list.getInfo(), 
   placeholder:'Select Emissions', 
-  onChange:renderScenario
+  onChange:renderScenario,
+  style:widgetStyle
 });
-
-var leftPanel = ui.Panel();
-leftPanel.add(renderScenarioDropdown);
-ui.root.insert(0, leftPanel);
 
 
 ////////////////////////////////////////
@@ -521,15 +521,12 @@ function renderModel(model_obj){
   Map.addLayer(image, singleBandVis);
 }
 
-var renderModelDropdown = ui.Select({
+var modelDrop = ui.Select({
   items:model_list.getInfo(), 
   placeholder:'Select GCM', 
-  onChange:renderModel
+  onChange:renderModel,
+  style:widgetStyle
 });
-
-var leftPanel = ui.Panel();
-leftPanel.add(renderModelDropdown);
-ui.root.insert(1, leftPanel);
 
 
 ////////////////////////////////////////
@@ -548,15 +545,12 @@ function renderDateRng(date_str_obj){
   Map.addLayer(image, singleBandVis);
 }
 
-var renderDateDropdown = ui.Select({
+var dateDrop = ui.Select({
   items:dateRng_list.getInfo(), 
   placeholder:'Select Date Range', 
-  onChange:renderDateRng
+  onChange:renderDateRng,
+  style:widgetStyle
 });
-
-var leftPanel = ui.Panel();
-leftPanel.add(renderDateDropdown);
-ui.root.insert(2, leftPanel);
 
 
 ////////////////////////////////////////
@@ -607,19 +601,21 @@ function renderUncertainty(class_str_obj){
   Map.addLayer(ee.Image(uncert_ic.toList(999).get(selected_class_num)), {palette:['000000', '00FF00'], min:0, max:100});
 }
 
-var renderUncertDropdown = ui.Select({
+var uncertDrop = ui.Select({
   items:class_list.getInfo(), 
   placeholder:'Select Uncertainty', 
-  onChange:renderUncertainty
+  onChange:renderUncertainty,
+  style:widgetStyle
 });
 
-var leftPanel = ui.Panel();
-leftPanel.add(renderUncertDropdown);
-ui.root.insert(3, leftPanel);
+var panelStyle = {
+  position:'top-left', 
+  stretch:'vertical', 
+  margin:'40px 40px'};
 
-
-
-
+ui.root.setLayout(ui.Panel.Layout.absolute())
+var dropPanel = ui.Panel([scenarioDrop, modelDrop, dateDrop, uncertDrop], null, panelStyle);
+ui.root.add(dropPanel);
 
 
 ////////////////////////////////////////
@@ -628,20 +624,20 @@ ui.root.insert(3, leftPanel);
 
 
 var legend = ui.Panel({
-  style: {
-    position: 'bottom-right',
-    padding: '8px 15px'
+  style:{
+    position:'middle-right',
+    padding:'8px 15px'
   }
 });
 
 // Title for legend
 var legendTitle = ui.Label({
-  value: 'Köppen Climate Classification',
-  style: {
-    fontWeight: 'bold',
-    fontSize: '14px',
-    margin: '0 0 4px 0',
-    padding: '0'
+  value:'Köppen Climate Classification',
+  style:{
+    fontWeight:'bold',
+    fontSize:'14px',
+    margin:'0 0 4px 0',
+    padding:'0'
   }
 });
 
@@ -660,30 +656,29 @@ var typeLabels = [
   'Et - Polar Tundra', 'Ef - Polar Ice Cap'
 ];
 
-
 // Loop to add legend items
 for (var i = 0; i < typeLabels.length; i++) {
   var colorBox = ui.Label({
     style: {
       backgroundColor: typePalette[i],
-      padding: '8px',
-      margin: '2px',
-      border: '1px solid black'
+      padding:'8px',
+      margin:'2px',
+      border:'1px solid black'
     }
   });
 
   var label = ui.Label({
-    value: typeLabels[i],
-    style: {
-      margin: '2px 0 2px 6px',
-      fontSize: '12px'
+    value:typeLabels[i],
+    style:{
+      margin:'2px 0 2px 6px',
+      fontSize:'12px'
     }
   });
 
   // Create a row with color and label
   var row = ui.Panel({
-    widgets: [colorBox, label],
-    layout: ui.Panel.Layout.Flow('horizontal')
+    widgets:[colorBox, label],
+    layout:ui.Panel.Layout.Flow('horizontal')
   });
 
   legend.add(row);
@@ -694,4 +689,6 @@ Map.add(legend);
 
 
 
-var info_str = "The map will output"
+var info_str = "The map info"
+
+
