@@ -613,8 +613,8 @@ var uncertDrop = ui.Select({
 var info_str = 'Overview: \n' +
                'This app is built using the Google Earth Engine cloud platform to do on-the-fly calculation \n' +
                'of Köppen-Geiger Climate Classifications (KGCC) derived from standard climate projections, \n' + 
-               'and to display outcomes for the Contiguous United States. The default placeholder selection \n' +
-               'options for map visualization are RCP4.5/CCSM4/2000-2029\n' +
+               'and to display outcomes for the Contiguous United States. The default placeholder selections \n' +
+               'for map visualization are RCP4.5/CCSM4/2000-2029. \n' +
                '\n' +                
                'Definitions: \n' + 
                'KGCC: A climate classification scheme for the range of climates types existing globally \n' + 
