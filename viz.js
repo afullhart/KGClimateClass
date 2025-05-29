@@ -450,8 +450,12 @@ function main_fn(selection_obj){
   return type_im;
 }
 
-//var selection_ic = ee.ImageCollection(selection_list.map(main_fn));
-//Map.addLayer(selection_ic.first(), {min:1, max:30});
+
+
+
+////////////////////////////////////////
+//
+// User interface
 
 
 var typePalette = [
@@ -717,7 +721,6 @@ var legend = ui.Panel({
   }
 });
 
-// Title for legend
 var legendTitle = ui.Label({
   value:'Köppen-Geiger Climate Classification',
   style:{
@@ -730,7 +733,6 @@ var legendTitle = ui.Label({
 
 legend.add(legendTitle);
 
-// Define the classes and colors
 var typeLabels = [
   'Af - Tropical, Rainforest', 'Am - Tropical, Monsoon', 'Aw - Tropical, Savanna',
   'Bwh - Arid, Desert, Hot', 'Bwk - Arid, Desert, Cold', 'Bsh - Semi-Arid, Steppe, Hot', 'Bsk - Semi-Arid, Steppe, Cold',
@@ -774,7 +776,7 @@ for (var i = 0; i < typeLabels.length; i++){
   legend.add(row);
 }
 
-// Add legend to the map
+
 Map.add(legend);
 
 
