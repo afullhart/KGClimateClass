@@ -618,6 +618,7 @@ var dropPanel = ui.Panel([scenarioDrop, modelDrop, dateDrop, uncertDrop], null, 
 ui.root.add(dropPanel);
 
 
+
 ////////////////////////////////////////
 //
 // Create a panel to hold the map legend
@@ -689,6 +690,44 @@ Map.add(legend);
 
 
 
-var info_str = "The map info"
+var info_str = '\
+                newline \
+                This app uses Google Earth Engine cloud platform to calculate on-the-fly and display Köppen-Geiger \
+                Climate Classifications (KGCC) based on standardized climate projections. \
+                Definitions: \
+                KGCC: A climate classification scheme generalized to the range of existing global climates \
+                based on thresholds in seasonal precipitation and temperature. \
+                IPCC: Intergovernmental Panel on Climate Change\
+                what is Google Earth Engine, what RCPs are, what GCMs are, what is IPCC, what is NEX-DCP30 \
+                Recommendations: The IPCC does not suggest that one emissions scenario is more likely than others. \
+                However, some point towards RCP4.5 (known as the middle-ground scenario) as a likely trajectory \
+                where global temperatures rise by 2-3 °C by 2100. For doing risk assessment, a worst-case scenario can be \
+                represented either by RCP6.0 or RCP8.5. Considering the dramatic rates of global change given by RCP8.5, \
+                RCP6.0 has been proposed as a more plausible worst-case scenario. The recommended GCM is CCSM4 because \
+                its outcome is typical of the CMIP5 ensemble, and it has compartively accurate climate norm baselines for the US. \
+                Uncertainty: The uncertainty metric doesn\'t indicate anything about which emissions scenario is most likely. \
+                The metric describes the likelihood of a climate type existing given an assummed emissions scenario. \
+                The metric is based on the ensemble of 33 GCMs esemble outcomes each \
+                Citations: \
+                 \
+                Beck, H. E., Zimmermann, N. E., McVicar, T. R., Vergopolan, N., Berg, A., & Wood, E. F. (2018).' + 
+               'Present and future Köppen-Geiger climate classification maps at 1-km resolution. Scientific data, 5(1), 1-12. \
+                 \
+                Peel, M. C., Finlayson, B. L., & McMahon, T. A. (2007). \
+                Updated world map of the Köppen-Geiger climate classification. \
+                Hydrology and earth system sciences, 11(5), 1633-1644. \
+                 \
+                Thrasher, B., Xiong, J., Wang, W., Melton, F., Michaelis, A., & Nemani, R. (2013). \
+                Downscaled climate projections suitable for resource management. \
+                Eos, Transactions American Geophysical Union, 94(37), 321-323. \
+                 \
+                Additional Notes: Use of the updated NASA/NEX-DCP30 for CMIP6 will be considered for this app \
+                if/when it becomes available on Google Earth Engine. \
+      
+print(info_str);
+
+
+
+
 
 
