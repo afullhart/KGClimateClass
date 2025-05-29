@@ -690,46 +690,59 @@ Map.add(legend);
 
 
 
-var info_str = '\
-                Overview: This app is built using the Google Earth Engine cloud platform to do on-the-fly calculation \
-                of Köppen-Geiger Climate Classifications (KGCC) derived from standard climate projections, \
-                and to display outcomes for the Contiguous United States. \
-                Definitions: \
-                KGCC: A climate classification scheme for the range of climates types existing globally \
-                based on thresholds in seasonal precipitation and temperature. \
-                CMIP5: An ensemble of Global Climate Models (GCMs) representing standard climate projections. \
-                NEX-DCP30: A highly downscaled (~800m) monthly climate dataset for the US representing 33 GCMs in \
-                the CMIP5 ensemble with the retrospective period of 1950-2005 and prospective period of 2006-2099. \
-                Usage: There is no consensus on which standard climate projection scenario is most likely. \
-                However, some point towards RCP4.5 (known as the middle-ground scenario) as a likely trajectory \
-                where global temperatures rise by 2-3 °C by 2100. For doing risk assessment, a worst-case scenario can be \
-                represented either by RCP6.0 or RCP8.5. Considering the dramatic rates of global change in RCP8.5, \
-                RCP6.0 has been proposed as a more plausible worst-case scenario. The CCSM4 GCM is recommended because \
-                its outcome is typical of the CMIP5 ensemble, and it has compartively accurate climate norm baselines \
-                for the US. \
-                Uncertainty: The uncertainty metric doesn\'t indicate anything about which emissions scenario is most likely. \
-                The metric describes the likelihood of a climate type existing given an assummed emissions scenario. \
-                The metric is based on the ensemble of 33 GCMs esemble and simply calculates the number of GCMs that agree \
-                on a climate type at a given time and location expressed as a percentage of 33. There is one layer per \
-                climate type in order to visualize agreement for each corresponding climate type. The built-in inspector \
-                tool can be used to click on the uncertainty layers to show these percentages. \
-                Citations: \
-                 \
-                Beck, H. E., Zimmermann, N. E., McVicar, T. R., Vergopolan, N., Berg, A., & Wood, E. F. (2018).' + 
-               'Present and future Köppen-Geiger climate classification maps at 1-km resolution. Scientific data, 5(1), 1-12. \
-                 \
-                Peel, M. C., Finlayson, B. L., & McMahon, T. A. (2007). \
-                Updated world map of the Köppen-Geiger climate classification. \
-                Hydrology and earth system sciences, 11(5), 1633-1644. \
-                 \
-                Thrasher, B., Xiong, J., Wang, W., Melton, F., Michaelis, A., & Nemani, R. (2013). \
-                Downscaled climate projections suitable for resource management. \
-                Eos, Transactions American Geophysical Union, 94(37), 321-323. \
-                 \
-                Additional Notes: Use of the updated NEX-DCP30 for CMIP6 will be considered for this app \
-                if/when it becomes available on Google Earth Engine. For an in-depth description of each climate \
-                type, see wikipedia.org/wiki/Köppen_climate_classification'
+////////////////////////////////////////
+//
+// Create info panel
+
+
+
+var info_str = 'Overview: This app is built using the Google Earth Engine cloud platform to do on-the-fly calculation\n' +
+               'of Köppen-Geiger Climate Classifications (KGCC) derived from standard climate projections,\n' + 
+               'and to display outcomes for the Contiguous United States.\n' +
+               '\n' +                
+               'Definitions: \n' + 
+               'KGCC: A climate classification scheme for the range of climates types existing globally \n' + 
+               'based on thresholds in seasonal precipitation and temperature. \n' + 
+               'CMIP5: An ensemble of Global Climate Models (GCMs) representing standard climate projections. \n' + 
+               'NEX-DCP30: A highly downscaled (~800m) monthly climate dataset for the US representing 33 GCMs in \n' + 
+               'the CMIP5 ensemble with the retrospective period of 1950-2005 and prospective period of 2006-2099. \n' + 
+               '\n' + 
+               'Usage: There is no consensus on which standard climate projection scenario is most likely. \n' + 
+               'However, some point towards RCP4.5 (known as the middle-ground scenario) as a likely trajectory \n' + 
+               'where global temperatures rise by 2-3 °C by 2100. For doing risk assessment, a worst-case scenario can be \n' + 
+               'represented either by RCP6.0 or RCP8.5. Considering the dramatic rates of global change in RCP8.5, \n' + 
+               'RCP6.0 has been proposed as a more plausible worst-case scenario. The CCSM4 GCM is recommended because \n' + 
+               'its outcome is typical of the CMIP5 ensemble, and it has compartively accurate climate norm baselines \n' + 
+               'for the US. \n' + 
+               '\n' + 
+               'Uncertainty: The uncertainty metric doesn\'t indicate anything about which emissions scenario is most likely. \n' + 
+               'The metric describes the likelihood of a climate type existing given an assummed emissions scenario. \n' + 
+               'The metric is based on the ensemble of 33 GCMs esemble and simply calculates the number of GCMs that agree \n' + 
+               'on a climate type at a given time and location expressed as a percentage of 33. There is one layer per \n' + 
+               'climate type in order to visualize agreement for each corresponding climate type. The built-in inspector \n' + 
+               'tool can be used to click on the uncertainty layers to show these percentages. \n' + 
+               '\n' + 
+               'Citations: \n' + 
+               '\n' + 
+               'Beck, H. E., Zimmermann, N. E., McVicar, T. R., Vergopolan, N., Berg, A., & Wood, E. F. (2018).' + 
+               'Present and future Köppen-Geiger climate classification maps at 1-km resolution. Scientific data, 5(1), 1-12. \n' + 
+               '\n' + 
+               'Peel, M. C., Finlayson, B. L., & McMahon, T. A. (2007). \n' + 
+               'Updated world map of the Köppen-Geiger climate classification. \n' + 
+               'Hydrology and earth system sciences, 11(5), 1633-1644. \n' + 
+               '\n' + 
+               'Thrasher, B., Xiong, J., Wang, W., Melton, F., Michaelis, A., & Nemani, R. (2013). \n' + 
+               'Downscaled climate projections suitable for resource management. \n' + 
+               'Eos, Transactions American Geophysical Union, 94(37), 321-323. \n' + 
+               '\n' + 
+               'Additional Notes: Use of the updated NEX-DCP30 for CMIP6 will be considered for this app \n' + 
+               'if/when it becomes available on Google Earth Engine. For an in-depth description of each climate \n' + 
+               'type, see wikipedia.org/wiki/Köppen_climate_classification'
       
 print(info_str);
+
+
+
+
 
 
