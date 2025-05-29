@@ -696,8 +696,8 @@ Map.add(legend);
 
 
 
-var info_str = 'Overview: This app is built using the Google Earth Engine cloud platform to do on-the-fly calculation\n' +
-               'of Köppen-Geiger Climate Classifications (KGCC) derived from standard climate projections,\n' + 
+var info_str = 'Overview: This app is built using the Google Earth Engine cloud platform to do on-the-fly calculation \n' +
+               'of Köppen-Geiger Climate Classifications (KGCC) derived from standard climate projections, \n' + 
                'and to display outcomes for the Contiguous United States.\n' +
                '\n' +                
                'Definitions: \n' + 
@@ -724,7 +724,7 @@ var info_str = 'Overview: This app is built using the Google Earth Engine cloud 
                '\n' + 
                'Citations: \n' + 
                '\n' + 
-               'Beck, H. E., Zimmermann, N. E., McVicar, T. R., Vergopolan, N., Berg, A., & Wood, E. F. (2018).' + 
+               'Beck, H. E., Zimmermann, N. E., McVicar, T. R., Vergopolan, N., Berg, A., & Wood, E. F. (2018). \n' + 
                'Present and future Köppen-Geiger climate classification maps at 1-km resolution. Scientific data, 5(1), 1-12. \n' + 
                '\n' + 
                'Peel, M. C., Finlayson, B. L., & McMahon, T. A. (2007). \n' + 
@@ -740,6 +740,25 @@ var info_str = 'Overview: This app is built using the Google Earth Engine cloud 
                'type, see wikipedia.org/wiki/Köppen_climate_classification'
       
 print(info_str);
+
+
+var widgetStyle = {
+  height:'100px',
+  width:'600px',
+  position:'bottom-center'
+}
+
+var textBox = ui.Textbox({placeholder:info_str, style:widgetStyle});
+
+var panelStyle = {
+  position:'bottom-center', 
+  stretch:'vertical', 
+  margin:'40px 40px'};
+
+ui.root.setLayout(ui.Panel.Layout.absolute())
+var infoPanel = ui.Panel([textBox], null, panelStyle);
+ui.root.add(infoPanel);
+
 
 
 
