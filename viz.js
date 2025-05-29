@@ -490,7 +490,6 @@ function renderScenario(scenario_obj){
   var scenario_str = ee.String(scenario_obj);
   scenario_global = scenario_str;
   var nested_selection_list = ee.List([[date_global, model_global, scenario_str]]);
-  print(nested_selection_list);
   var selection_ic = ee.ImageCollection(nested_selection_list.map(main_fn));
   var image = selection_ic.first();
   Map.addLayer(image, singleBandVis);
@@ -514,7 +513,6 @@ function renderModel(model_obj){
   var model_str = ee.String(model_obj);
   model_global = model_str;
   var nested_selection_list = ee.List([[date_global, model_str, scenario_global]]);
-  print(nested_selection_list);
   var selection_ic = ee.ImageCollection(nested_selection_list.map(main_fn));
   var image = selection_ic.first();
   Map.addLayer(image, singleBandVis);
@@ -538,7 +536,6 @@ function renderDateRng(date_str_obj){
   var year = parseInt(ee.String(date_str_obj).getInfo().split('-')[0]);
   date_global = year
   var nested_selection_list = ee.List([[year, model_global, scenario_global]]);
-  print(nested_selection_list);
   var selection_ic = ee.ImageCollection(nested_selection_list.map(main_fn));
   var image = selection_ic.first();
   Map.addLayer(image, singleBandVis);
@@ -616,7 +613,8 @@ var uncertDrop = ui.Select({
 var info_str = 'Overview: \n' +
                'This app is built using the Google Earth Engine cloud platform to do on-the-fly calculation \n' +
                'of Köppen-Geiger Climate Classifications (KGCC) derived from standard climate projections, \n' + 
-               'and to display outcomes for the Contiguous United States.\n' +
+               'and to display outcomes for the Contiguous United States. The default placeholder selection \n' +
+               'options for map visualization are RCP4.5/CCSM4/2000-2029\n' +
                '\n' +                
                'Definitions: \n' + 
                'KGCC: A climate classification scheme for the range of climates types existing globally \n' + 
@@ -638,9 +636,10 @@ var info_str = 'Overview: \n' +
                'The uncertainty metric doesn\'t indicate anything about which emissions scenario is most likely. \n' + 
                'It describes the likelihood of a climate type existing given an assummed emissions scenario. \n' + 
                'The metric considers the entire ensemble of 33 GCMs esemble and simply calculates the number of GCMs  \n' + 
-               'that agree that a climate type exists at a given time and location expressed as a percentage of the total. \n' +  
+               'that agree a climate type exists at a given time and location expressed as a percentage of the total. \n' +  
                'There is one layer per climate type in order to visualize agreement for each corresponding climate type.  \n' + 
-               'The built-in inspector tool can be used to click on the uncertainty layers to show these percentages. \n' + 
+               'The built-in inspector tool can be used to click on the uncertainty layers to show these percentages. \n' +
+               'The uncertainty layers will load much slower because the KGCC classification has to be done for every GCM. \n' +
                '\n' + 
                'Citations: \n' + 
                'Beck, H. E., Zimmermann, N. E., McVicar, T. R., Vergopolan, N., Berg, A., & Wood, E. F. (2018). \n' + 
@@ -684,10 +683,15 @@ function renderInfobox(bool_obj){
   }
 }
 
+var checkStyle = {
+  position:'top-left',
+  fontSize:'12px'
+}
+
 var infoCheck = ui.Checkbox({
   label:'Show ReadMe',
   onChange:renderInfobox,
-  style:labelStyle
+  style:checkStyle
 });
 
 var panelStyle = {
@@ -698,13 +702,6 @@ var panelStyle = {
 ui.root.setLayout(ui.Panel.Layout.absolute())
 var dropPanel = ui.Panel([scenarioDrop, modelDrop, dateDrop, uncertDrop, infoCheck], null, panelStyle);
 ui.root.add(dropPanel);
-
-
-
-
-
-
-
 
 
 
