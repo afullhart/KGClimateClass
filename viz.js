@@ -454,7 +454,6 @@ function main_fn(selection_obj){
 //Map.addLayer(selection_ic.first(), {min:1, max:30});
 
 
-
 var typePalette = [
   '#0000FF', '#0078FF', '#46FAAA', '#FF0000', '#FF9696', '#F5A500', '#FFDC64',
   '#FFFF00', '#C8C800', '#969600', '#96FF96', '#64C864', '#329632',
@@ -608,14 +607,104 @@ var uncertDrop = ui.Select({
   style:widgetStyle
 });
 
+
+////////////////////////////////////////
+//
+// Create info panel
+
+
+var info_str = 'Overview: \n' +
+               'This app is built using the Google Earth Engine cloud platform to do on-the-fly calculation \n' +
+               'of Köppen-Geiger Climate Classifications (KGCC) derived from standard climate projections, \n' + 
+               'and to display outcomes for the Contiguous United States.\n' +
+               '\n' +                
+               'Definitions: \n' + 
+               'KGCC: A climate classification scheme for the range of climates types existing globally \n' + 
+               'based on thresholds in seasonal precipitation and temperature. \n' + 
+               'CMIP5: An ensemble of Global Climate Models (GCMs) representing standard climate projections. \n' + 
+               'NEX-DCP30: A highly downscaled (~800m) monthly climate dataset for the US representing 33 GCMs in \n' + 
+               'the CMIP5 ensemble with the retrospective period of 1950-2005 and prospective period of 2006-2099. \n' + 
+               '\n' + 
+               'Usage:  \n' +
+               'There is no consensus on which standard climate projection scenario is most likely. \n' + 
+               'However, some point towards RCP4.5 (known as the middle-ground scenario) as a likely projection \n' + 
+               'where global temperatures rise by 2-3 °C by 2100. For doing risk assessment, a worst-case scenario can be \n' + 
+               'represented either by RCP6.0 or RCP8.5. Considering the dramatic rates of global change in RCP8.5, \n' + 
+               'RCP6.0 has been proposed as a more plausible worst-case scenario. The CCSM4 GCM is recommended \n' + 
+               'because its outcome is typical of the CMIP5 ensemble, and it has compartively accurate \n' + 
+               'climate norm baselines for the US. \n' + 
+               '\n' + 
+               'Uncertainty: \n' +  
+               'The uncertainty metric doesn\'t indicate anything about which emissions scenario is most likely. \n' + 
+               'It describes the likelihood of a climate type existing given an assummed emissions scenario. \n' + 
+               'The metric considers the entire ensemble of 33 GCMs esemble and simply calculates the number of GCMs  \n' + 
+               'that agree that a climate type exists at a given time and location expressed as a percentage of the total. \n' +  
+               'There is one layer per climate type in order to visualize agreement for each corresponding climate type.  \n' + 
+               'The built-in inspector tool can be used to click on the uncertainty layers to show these percentages. \n' + 
+               '\n' + 
+               'Citations: \n' + 
+               'Beck, H. E., Zimmermann, N. E., McVicar, T. R., Vergopolan, N., Berg, A., & Wood, E. F. (2018). \n' + 
+               'Present and future Köppen-Geiger climate classification maps at 1-km resolution. Scientific data, 5(1), 1-12. \n' + 
+               '\n' + 
+               'Peel, M. C., Finlayson, B. L., & McMahon, T. A. (2007). \n' + 
+               'Updated world map of the Köppen-Geiger climate classification. \n' + 
+               'Hydrology and earth system sciences, 11(5), 1633-1644. \n' + 
+               '\n' + 
+               'Thrasher, B., Xiong, J., Wang, W., Melton, F., Michaelis, A., & Nemani, R. (2013). \n' + 
+               'Downscaled climate projections suitable for resource management. \n' + 
+               'Eos, Transactions American Geophysical Union, 94(37), 321-323. \n' + 
+               '\n' + 
+               'Additional Notes: \n' +
+               'Use of the updated NEX-DCP30 for CMIP6 will be considered for this app \n' + 
+               'if/when it becomes available on Google Earth Engine. For an in-depth description of each climate \n' + 
+               'type, see wikipedia.org/wiki/Köppen_climate_classification'
+      
+print(info_str);
+
+
+var labelStyle = {
+  height:'600px',
+  width:'500px',
+  position:'bottom-center',
+  whiteSpace:'pre',
+  padding:'1px',
+  margin:'2px',
+  textAlign:'left',
+  fontSize:'10px'
+}
+
+var textBox = ui.Label({value:info_str, style:labelStyle});
+
+function renderInfobox(bool_obj){
+  if (bool_obj == true){
+    ui.root.add(textBox);
+  }
+  else{
+    ui.root.remove(textBox);
+  }
+}
+
+var infoCheck = ui.Checkbox({
+  label:'Show ReadMe',
+  onChange:renderInfobox,
+  style:labelStyle
+});
+
 var panelStyle = {
   position:'top-left', 
   stretch:'vertical', 
   margin:'40px 40px'};
 
 ui.root.setLayout(ui.Panel.Layout.absolute())
-var dropPanel = ui.Panel([scenarioDrop, modelDrop, dateDrop, uncertDrop], null, panelStyle);
+var dropPanel = ui.Panel([scenarioDrop, modelDrop, dateDrop, uncertDrop, infoCheck], null, panelStyle);
 ui.root.add(dropPanel);
+
+
+
+
+
+
+
 
 
 
@@ -633,10 +722,10 @@ var legend = ui.Panel({
 
 // Title for legend
 var legendTitle = ui.Label({
-  value:'Köppen Climate Classification',
+  value:'Köppen-Geiger Climate Classification',
   style:{
     fontWeight:'bold',
-    fontSize:'14px',
+    fontSize:'12px',
     margin:'0 0 4px 0',
     padding:'0'
   }
@@ -658,20 +747,23 @@ var typeLabels = [
 ];
 
 // Loop to add legend items
-for (var i = 0; i < typeLabels.length; i++) {
+for (var i = 0; i < typeLabels.length; i++){
   var colorBox = ui.Label({
     style: {
       backgroundColor: typePalette[i],
-      padding:'8px',
-      margin:'2px',
-      border:'1px solid black'
+      padding:'6px',
+      margin:'0px',
+      border:'1px solid black',
+      fontSize:'10px'
     }
   });
 
   var label = ui.Label({
     value:typeLabels[i],
     style:{
-      margin:'2px 0 2px 6px',
+      padding:'1px',
+      margin:'0px',
+      position:'middle-left',
       fontSize:'12px'
     }
   });
@@ -687,81 +779,5 @@ for (var i = 0; i < typeLabels.length; i++) {
 
 // Add legend to the map
 Map.add(legend);
-
-
-
-////////////////////////////////////////
-//
-// Create info panel
-
-
-
-var info_str = 'Overview: This app is built using the Google Earth Engine cloud platform to do on-the-fly calculation \n' +
-               'of Köppen-Geiger Climate Classifications (KGCC) derived from standard climate projections, \n' + 
-               'and to display outcomes for the Contiguous United States.\n' +
-               '\n' +                
-               'Definitions: \n' + 
-               'KGCC: A climate classification scheme for the range of climates types existing globally \n' + 
-               'based on thresholds in seasonal precipitation and temperature. \n' + 
-               'CMIP5: An ensemble of Global Climate Models (GCMs) representing standard climate projections. \n' + 
-               'NEX-DCP30: A highly downscaled (~800m) monthly climate dataset for the US representing 33 GCMs in \n' + 
-               'the CMIP5 ensemble with the retrospective period of 1950-2005 and prospective period of 2006-2099. \n' + 
-               '\n' + 
-               'Usage: There is no consensus on which standard climate projection scenario is most likely. \n' + 
-               'However, some point towards RCP4.5 (known as the middle-ground scenario) as a likely trajectory \n' + 
-               'where global temperatures rise by 2-3 °C by 2100. For doing risk assessment, a worst-case scenario can be \n' + 
-               'represented either by RCP6.0 or RCP8.5. Considering the dramatic rates of global change in RCP8.5, \n' + 
-               'RCP6.0 has been proposed as a more plausible worst-case scenario. The CCSM4 GCM is recommended because \n' + 
-               'its outcome is typical of the CMIP5 ensemble, and it has compartively accurate climate norm baselines \n' + 
-               'for the US. \n' + 
-               '\n' + 
-               'Uncertainty: The uncertainty metric doesn\'t indicate anything about which emissions scenario is most likely. \n' + 
-               'The metric describes the likelihood of a climate type existing given an assummed emissions scenario. \n' + 
-               'The metric is based on the ensemble of 33 GCMs esemble and simply calculates the number of GCMs that agree \n' + 
-               'on a climate type at a given time and location expressed as a percentage of 33. There is one layer per \n' + 
-               'climate type in order to visualize agreement for each corresponding climate type. The built-in inspector \n' + 
-               'tool can be used to click on the uncertainty layers to show these percentages. \n' + 
-               '\n' + 
-               'Citations: \n' + 
-               '\n' + 
-               'Beck, H. E., Zimmermann, N. E., McVicar, T. R., Vergopolan, N., Berg, A., & Wood, E. F. (2018). \n' + 
-               'Present and future Köppen-Geiger climate classification maps at 1-km resolution. Scientific data, 5(1), 1-12. \n' + 
-               '\n' + 
-               'Peel, M. C., Finlayson, B. L., & McMahon, T. A. (2007). \n' + 
-               'Updated world map of the Köppen-Geiger climate classification. \n' + 
-               'Hydrology and earth system sciences, 11(5), 1633-1644. \n' + 
-               '\n' + 
-               'Thrasher, B., Xiong, J., Wang, W., Melton, F., Michaelis, A., & Nemani, R. (2013). \n' + 
-               'Downscaled climate projections suitable for resource management. \n' + 
-               'Eos, Transactions American Geophysical Union, 94(37), 321-323. \n' + 
-               '\n' + 
-               'Additional Notes: Use of the updated NEX-DCP30 for CMIP6 will be considered for this app \n' + 
-               'if/when it becomes available on Google Earth Engine. For an in-depth description of each climate \n' + 
-               'type, see wikipedia.org/wiki/Köppen_climate_classification'
-      
-print(info_str);
-
-
-var widgetStyle = {
-  height:'100px',
-  width:'600px',
-  position:'bottom-center'
-}
-
-var textBox = ui.Textbox({placeholder:info_str, style:widgetStyle});
-
-var panelStyle = {
-  position:'bottom-center', 
-  stretch:'vertical', 
-  margin:'40px 40px'};
-
-ui.root.setLayout(ui.Panel.Layout.absolute())
-var infoPanel = ui.Panel([textBox], null, panelStyle);
-ui.root.add(infoPanel);
-
-
-
-
-
 
 
