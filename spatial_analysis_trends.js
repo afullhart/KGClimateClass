@@ -6,6 +6,20 @@ var end_year = 2029;
 
 var selection_list = ee.List([[2000, 'CCSM4', 'rcp45']]);
 var dateRng_list = ee.List(['1970-1999', '1980-2009', '1990-2019', '2000-2029', '2010-2039', '2020-2049', '2030-2059', '2040-2069', '2050-2079', '2060-2089', '2070-2099']);
+var scenario_list = ee.List(['rcp26', 'rcp45', 'rcp60', 'rcp85']);
+
+function zipper_fn(scenario_obj){
+  var scenario_str = ee.String(scenario_obj);
+  function zip_fn(date_obj){
+    var yr_num = ee.Number(date_obj);
+    var z_list = ee.List([yr_num, scenario_str]);
+    return z_list;
+  }
+  var zip_list = ee.List(dateRng_list.map(zip_fn));
+  return zip_list;
+}
+
+var selection_zip_list = scenario_list.map(zipper_fn);
 
 var ndays_months = ee.List([31, 28.25, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]);
 var order_months = ee.List([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
@@ -13,18 +27,19 @@ var summr_months = ee.List([4, 5, 6, 7, 8, 9]);
 var wintr_months = ee.List([1, 2, 3, 10, 11, 12]);
 
 
-function main_fn(selection_obj){
+var model_global = 'CCSM4';
 
-  var in_list = ee.List(selection_obj);
-  var start_year = ee.Number(in_list.get(0));
-  var model = ee.String(in_list.get(1));
-  var scenario = ee.String(in_list.get(2));
+
+function main_fn(selection_obj){
+  var s_list = ee.List(selection_obj);
+  var start_year = ee.Number.parse(ee.String(ee.List(s_list).get(0)).split('-').get(0));
+  var scenario = ee.String(s_list.get(1));
 
   var modelfilter = ee.Filter.or(
     ee.Filter.eq('scenario', 'historical'),
     ee.Filter.eq('scenario', scenario));
   var icA = ic.filter(modelfilter);
-  var icB = icA.filter(ee.Filter.eq('model', model));
+  var icB = icA.filter(ee.Filter.eq('model', model_global));
   
   var start = ee.Date.fromYMD(ee.Number(start_year), 1, 1);
   var end = ee.Date.fromYMD(ee.Number(start_year).add(30), 1, 1);
@@ -445,27 +460,34 @@ function main_fn(selection_obj){
 }
 
 
-var model_global = 'CCSM4';
-var scenario_global = 'rcp45';
+var selection_list = ee.List([[2000, 'CCSM4', 'rcp45']]);
+var scale = ic.first().projection().nominalScale().getInfo();
+var bbox_geo = ee.Geometry.BBox(-126, 24, -66, 50);
 
-var date_str_test = ee.String(dateRng_list.get(0));
-print(ee.Number(date_str_test.split('-').get(0)));
-
-
-
-function renderDateRng(date_str_obj){
-  var year = parseInt(ee.String(date_str_obj).getInfo().split('-')[0]);
-  date_global = year
-  var nested_selection_list = ee.List([[year, model_global, scenario_global]]);
-  var selection_ic = ee.ImageCollection(nested_selection_list.map(main_fn));
-  var image = selection_ic.first();
-  return image;
+function scenario_fn(selection_obj){
+  var selection_inside_list = ee.List(selection_obj);
+  var scenario_ic = ee.ImageCollection(selection_inside_list.map(main_fn));
+  var scenario_ic_list = scenario_ic.toList(999).slice(1);
+  var ref_im = ee.Image(scenario_ic.first());
+  var nonNull_im = ref_im.gt(0.0);
+  var ct_dict = nonNull_im.reduceRegion({reducer:ee.Reducer.count(), geometry:bbox_geo, scale:scale, maxPixels:1000000000});
+  var ref_num = ee.Number(ct_dict.get('B1_sum'));
+  
+  function differencing_fn(im_obj){
+    var next_im = ee.Image(im_obj);
+    var diff_im = next_im.eq(ref_im);
+    var ct_dict = diff_im.reduceRegion({reducer:ee.Reducer.sum(), geometry:bbox_geo, scale:scale, maxPixels:1000000000});
+    var ct_num = ee.Number(ct_dict.get('B1_sum'));
+    return ee.Number(ref_num.subtract(ct_num)).divide(ref_num).multiply(100.0);
+  }
+  
+  var counts_list = ee.List(scenario_ic_list.map(differencing_fn));
+  return counts_list; 
 }
 
+var output_list = ee.List(selection_zip_list.map(scenario_fn));
+print(output_list);
 
-var scenario_ic = dateRng_list.map(renderDateRng);
 
-print(scenario_ic);
-Map.addLayer(scenario_ic.first());
 
 
