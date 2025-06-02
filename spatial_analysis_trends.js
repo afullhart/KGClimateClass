@@ -493,6 +493,7 @@ var chart = ui.Chart.array.values(output_list, 1, dateRng_list)
   .setSeriesNames(['RCP2.6', 'RCP4.5', 'RCP6.0', 'RCP8.5'])
   .setOptions({
     title:'Percent of contiguous US that is projected to change climate type (based on CCSM4)',
+    titleTextStyle:{italic:false, bold:true, fontSize:21},
     legend:{position:'top-right'},
     hAxis:{title:'Date Range', titleTextStyle:{italic:false, bold:true}},
     vAxis:{title:'Percent %', titleTextStyle:{italic:false, bold:true}},
@@ -503,5 +504,4 @@ var chart = ui.Chart.array.values(output_list, 1, dateRng_list)
 
 
 print(chart);
-
 
