@@ -460,7 +460,7 @@ function main_fn(selection_obj){
 }
 
 
-var selection_list = ee.List([[2000, 'CCSM4', 'rcp45']]);
+
 var scale = ic.first().projection().nominalScale().getInfo();
 var bbox_geo = ee.Geometry.BBox(-126, 24, -66, 50);
 
@@ -482,12 +482,26 @@ function scenario_fn(selection_obj){
   }
   
   var counts_list = ee.List(scenario_ic_list.map(differencing_fn));
+  var counts_list = ee.List([0.0]).cat(counts_list);
   return counts_list; 
 }
 
 var output_list = ee.List(selection_zip_list.map(scenario_fn));
-print(output_list);
 
 
+var chart = ui.Chart.array.values(output_list, 1, dateRng_list)
+  .setSeriesNames(['RCP2.6', 'RCP4.5', 'RCP6.0', 'RCP8.5'])
+  .setOptions({
+    title:'Percent of contiguous US that is projected to change climate type (based on CCSM4)',
+    legend:{position:'top-right'},
+    hAxis:{title:'Date Range', titleTextStyle:{italic:false, bold:true}},
+    vAxis:{title:'Percent %', titleTextStyle:{italic:false, bold:true}},
+    colors:['#6a9f58', '#2018ff', '#967662', '#d82424'],
+    pointSize: 0,
+    lineSize: 3     
+});
+
+
+print(chart);
 
 
