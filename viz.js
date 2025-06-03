@@ -1,5 +1,4 @@
 
-
 var ic = ee.ImageCollection('NASA/NEX-DCP30');
 var scale = ic.first().projection().nominalScale().getInfo();
 
