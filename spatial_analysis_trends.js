@@ -1,9 +1,5 @@
 var ic = ee.ImageCollection("NASA/NEX-DCP30");
 
-var model = ee.String('CCSM4');
-var start_year = 2000;
-var end_year = 2029;
-
 var selection_list = ee.List([[2000, 'CCSM4', 'rcp45']]);
 var dateRng_list = ee.List(['1970-1999', '1980-2009', '1990-2019', '2000-2029', '2010-2039', '2020-2049', '2030-2059', '2040-2069', '2050-2079', '2060-2089', '2070-2099']);
 var scenario_list = ee.List(['rcp26', 'rcp45', 'rcp60', 'rcp85']);
@@ -492,11 +488,11 @@ var output_list = ee.List(selection_zip_list.map(scenario_fn));
 var chart = ui.Chart.array.values(output_list, 1, dateRng_list)
   .setSeriesNames(['RCP2.6', 'RCP4.5', 'RCP6.0', 'RCP8.5'])
   .setOptions({
-    title:'Percent of contiguous US that is projected to change climate type (based on CCSM4)',
-    titleTextStyle:{italic:false, bold:true, fontSize:21},
+    title:'Percent of contiguous US that is projected to change climate type\n(based on CCSM4)',
+    titleTextStyle:{italic:false, bold:true, fontSize:24},
     legend:{position:'top-right'},
     hAxis:{title:'Date Range', titleTextStyle:{italic:false, bold:true}},
-    vAxis:{title:'Percent %', titleTextStyle:{italic:false, bold:true}},
+    vAxis:{title:'Percent Land Area (%)', titleTextStyle:{italic:false, bold:true}},
     colors:['#6a9f58', '#2018ff', '#967662', '#d82424'],
     pointSize: 0,
     lineSize: 3     
@@ -504,4 +500,5 @@ var chart = ui.Chart.array.values(output_list, 1, dateRng_list)
 
 
 print(chart);
+
 
