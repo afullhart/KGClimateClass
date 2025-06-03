@@ -733,53 +733,29 @@ var testpanelStyle = {
 
 var testPanel = ui.Panel([], null, testpanelStyle);
 
-function click_zipper_fn(date_obj){
-  var d = ee.Number.parse(ee.String(date_obj).split('-').get(0));
-  return ee.List([d, model_global, scenario_global]);
-}
-var click_selection_list = ee.List(dateRng_list.map(click_zipper_fn));
-var click_ic = ee.ImageCollection(click_selection_list.map(main_fn));  
-var point = ee.Geometry.Point([-116.161, 39.589]);
-Map.addLayer(point);
-var type_list = click_ic.getRegion({geometry:point, scale:scale}).getInfo();
-print('type_list', type_list);
-
-
-var js_type_list = [];
-for (var i = 1; i < type_list.length; i++){
-  js_type_list.push(parseFloat(type_list[i][4]));
-}
-print(js_type_list);
-
-
-var chart = ui.Chart.array.values(js_type_list, 0, dateRng_list)
-  .setSeriesNames(['percent change'])
-  .setOptions({
-    title:'Climate type timeline',
-    titleTextStyle:{italic:false, bold:true, fontSize:24},
-    legend:{position:'top-right'},
-    hAxis:{title:'Date Range', titleTextStyle:{italic:false, bold:true}},
-    vAxis:{title:'Climate Type', titleTextStyle:{italic:false, bold:true}},
-    colors:['#6a9f58', '#2018ff', '#967662', '#d82424'],
-    pointSize: 0,
-    lineSize: 3     
-});
-
-print(chart);
-
 function clickCallback(clickInfo_obj){
   var lat = clickInfo_obj.lat;
   var lon = clickInfo_obj.lon;
   var pt = ee.Geometry.Point([lon, lat]);
-  var testBox = ui.Label({value:lat + ' ' + lon, style:labelStyle});
-  testPanel.add(testBox);
-  ui.root.add(testPanel);
   function click_zipper_fn(date_obj){
     var d = ee.Number.parse(ee.String(date_obj).split('-').get(0));
     return ee.List([d, model_global, scenario_global]);
   }
   var click_selection_list = ee.List(dateRng_list.map(click_zipper_fn));
-  var click_ic = ee.ImageCollection(click_selection_list.map(main_fn));
+  var click_ic = ee.ImageCollection(click_selection_list.map(main_fn));  
+  var type_list = click_ic.getRegion({geometry:pt, scale:scale}).getInfo();
+  
+  var js_type_list = [];
+  for (var i = 1; i < type_list.length; i++){
+    js_type_list.push(parseFloat(type_list[i][4]));
+  }
+  
+  ui.root.setLayout(ui.Panel.Layout.absolute());
+  var label = ui.Label({value:js_type_list, style:{
+    position:'bottom-center'
+  }});
+  var testPanel = ui.Panel([label], null, testpanelStyle);
+  ui.root.add(testPanel);
 }
 
 function renderTimelinebox(bool_obj){
