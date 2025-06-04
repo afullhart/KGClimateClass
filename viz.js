@@ -467,19 +467,6 @@ var typePalette = [
   '#B2B2B2', '#666666'
 ];
 
-var singleBandVis = {
-  min: 1,
-  max: 30,
-  palette: typePalette
-};
-
-
-var widgetStyle = {
-  position:'bottom-center'
-}
-
-
-
 var scenario_global = ee.List(selection_list.get(0)).get(2).getInfo();
 var model_global = ee.List(selection_list.get(0)).get(1).getInfo();
 var date_global = ee.List(selection_list.get(0)).get(0).getInfo();
@@ -489,6 +476,16 @@ var date_global = ee.List(selection_list.get(0)).get(0).getInfo();
 //
 // Scenario Drop Down
 
+
+var singleBandVis = {
+  min: 1,
+  max: 30,
+  palette: typePalette
+};
+
+var widgetStyle = {
+  position:'bottom-center'
+}
 
 function renderScenario(scenario_obj){
   Map.layers().reset();
@@ -725,12 +722,12 @@ ui.root.setLayout(ui.Panel.Layout.absolute());
 var checkboxPanel = ui.Panel([clickCheck], null, panelStyle);
 ui.root.add(checkboxPanel);
 
-var testpanelStyle = {
+var timelinePanelStyle = {
   position:'bottom-center', 
   stretch:'vertical', 
   margin:'39px 40px'};
 
-var testPanel = ui.Panel([], null, testpanelStyle);
+var timelinePanel = ui.Panel([], null, timelinePanelStyle);
 
 function clickCallback(clickInfo_obj){
   var lat = clickInfo_obj.lat;
@@ -746,15 +743,25 @@ function clickCallback(clickInfo_obj){
   
   var js_type_list = [];
   for (var i = 1; i < type_list.length; i++){
-    js_type_list.push(parseFloat(type_list[i][4]));
+    var type_str = class_list.get(type_list[i][4] - 1).getInfo();
+    js_type_list.push(type_str);
   }
-  
+
+  var type_str = ''
+  var daterng_str = ''
+  for (var i = 0; i < type_list.length; i++){
+    var type = js_type_list[i];
+    var date = dateRng_list.getInfo()[i];
+    var type_str = type_str + '       ' + type;
+    var daterng_str = daterng_str + ' ' + date;
+  }
+  var timeline_str = type_str + '\n' + daterng_str;
   ui.root.setLayout(ui.Panel.Layout.absolute());
-  var label = ui.Label({value:js_type_list, style:{
+  var label = ui.Label({value:timeline_str, style:{
     position:'bottom-center'
   }});
-  var testPanel = ui.Panel([label], null, testpanelStyle);
-  ui.root.add(testPanel);
+  var timelinePanel = ui.Panel([label], null, timelinePanelStyle);
+  ui.root.add(timelinePanel);
 }
 
 function renderTimelinebox(bool_obj){
@@ -762,11 +769,7 @@ function renderTimelinebox(bool_obj){
     Map.onClick(clickCallback);
   }
   else{
-    ui.root.remove(testPanel);
-    Map.unlisten(clickCallback)
-    var testBox = ui.Label({value:'placeholder', style:labelStyle});
-    testPanel.remove(testBox);
-    
+    ui.root.remove(timelinePanel);
   }
 }
 
