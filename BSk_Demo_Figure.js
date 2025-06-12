@@ -109,35 +109,35 @@ var warm_mo_im = warm_mo_ct_im.gte(4);
 
 
 //E
-var e_im = tw_im.lt(10.0);
+var e_im = tw_im.lte(10.0);
 Map.addLayer(e_im, {min:0, max:1, opacity:0.8}, 'e_im');
 
 //Et
-var con_et_im = tw_im.gte(0.0);
+var con_et_im = tw_im.gt(0.0);
 var mix_im = e_im.add(con_et_im);
 var et_im = mix_im.eq(2.0);
 
 //Ef
-var con_ef_im = tw_im.lt(0.0);
+var con_ef_im = tw_im.lte(0.0);
 var mix_im = e_im.add(con_ef_im);
 var ef_im = mix_im.eq(2.0);
 
 //B
-var sin_e_im = tw_im.gte(10.0);
+var sin_e_im = tw_im.gt(10.0); 
 var con_b_im = zero_im.where(pann_im.lt(pthr_im.multiply(10.0)), 1);
 var mix_im = con_b_im.add(sin_e_im);
 var b_im = mix_im.eq(2.0);
 Map.addLayer(b_im, {min:0, max:1, opacity:0.8}, 'b_im');
 
-
-var con_bs_im = zero_im.where(pann_im.gt(pthr_im.multiply(5.0)), 1);
+var con_bs_im = zero_im.where(pann_im.gte(pthr_im.multiply(5.0)), 1);
 var mix_im = b_im.add(con_bs_im);
 var bs_im = mix_im.eq(2.0);
 Map.addLayer(bs_im, {min:0, max:1, opacity:0.8}, 'bs_im');
 
-var con_bw_im = zero_im.where(pann_im.lte(pthr_im.multiply(5.0)), 1);
+var con_bw_im = zero_im.where(pann_im.lt(pthr_im.multiply(5.0)), 1);
 var mix_im = b_im.add(con_bw_im);
 var bw_im = mix_im.eq(2.0);
+
 
 //Bsh
 var con_bsh_im = zero_im.where(tann_im.gte(18.0), 1);
@@ -149,6 +149,7 @@ var con_bsk_im = zero_im.where(tann_im.lt(18.0), 1);
 var mix_im = bs_im.add(con_bsk_im);
 var bsk_im = mix_im.eq(2.0);
 Map.addLayer(bsk_im, {min:0, max:1, opacity:0.8}, 'bsk_im');
+
 
 //Bwh
 var con_bwh_im = zero_im.where(tann_im.gte(18.0), 1);
@@ -163,7 +164,7 @@ var bwk_im = mix_im.eq(2.0);
 //D
 var mix_im = e_im.add(b_im);
 var sin_e_b_im = mix_im.eq(0.0);
-var con_d_im = zero_im.where(tc_im.lte(-3.0), 1);
+var con_d_im = zero_im.where(tc_im.lte(0.0), 1);
 var mix_im = sin_e_b_im.add(con_d_im);
 var d_im = mix_im.eq(2.0);
 var mix_im = d_im.add(dry_summr_im);
@@ -176,7 +177,7 @@ var df_im = mix_im.eq(1.0);
 //Dsa
 var con_dsa = zero_im.where(tw_im.gte(22.0), 1);
 var mix_im = ds_im.add(con_dsa);
-var dsa_im = mix_im.eq(2.0);
+var dsa_im = mix_im.eq(2.0);  
 
 //Dsb
 var sin_dsa = dsa_im.eq(0.0);
@@ -188,35 +189,35 @@ var sin_dsa = dsa_im.eq(0.0);
 var sin_dsb = dsb_im.eq(0.0);
 var mix_im = sin_dsa.add(sin_dsb).add(ds_im);
 var sin_dsa_dsb_im = mix_im.eq(3.0);
-var con_dsc_im = zero_im.where(tc_im.gt(-38.0), 1);
+var con_dsc_im = zero_im.where(tc_im.gte(-38.0), 1);
 var mix_im = con_dsc_im.add(sin_dsa_dsb_im);
 var dsc_im = mix_im.eq(2.0);
 
 //Dsd
-var sin_dsa = dsa_im.eq(0.0);
+var sin_dsa = dsa_im.eq(0.0); 
 var sin_dsb = dsb_im.eq(0.0);
 var mix_im = sin_dsa.add(sin_dsb).add(ds_im);
 var sin_dsa_dsb_im = mix_im.eq(3.0);
-var con_dsd_im = zero_im.where(tc_im.lte(-38.0), 1);
+var con_dsd_im = zero_im.where(tc_im.lt(-38.0), 1);
 var mix_im = con_dsd_im.add(sin_dsa_dsb_im);
 var dsd_im = mix_im.eq(2.0);
 
 //Dwa
-var con_dwa = zero_im.where(tw_im.gte(22.0), 1);
+var con_dwa = zero_im.where(tw_im.gte(22.0), 1); 
 var mix_im = dw_im.add(con_dwa);
 var dwa_im = mix_im.eq(2.0);
 
 //Dwb
-var sin_dwa = dwa_im.eq(0.0);
+var sin_dwa = dwa_im.eq(0.0); 
 var mix_im = sin_dwa.add(dw_im).add(warm_mo_im);
 var dwb_im = mix_im.eq(3.0);
 
 //Dwc
-var sin_dwa = dwa_im.eq(0.0);
+var sin_dwa = dwa_im.eq(0.0); 
 var sin_dwb = dwb_im.eq(0.0);
 var mix_im = sin_dwa.add(sin_dwb).add(dw_im);
 var sin_dwa_dwb_im = mix_im.eq(3.0);
-var con_dwc_im = zero_im.where(tc_im.gt(-38.0), 1);
+var con_dwc_im = zero_im.where(tc_im.gte(-38.0), 1);
 var mix_im = con_dwc_im.add(sin_dwa_dwb_im);
 var dwc_im = mix_im.eq(2.0);
 
@@ -225,7 +226,7 @@ var sin_dwa = dwa_im.eq(0.0);
 var sin_dwb = dwb_im.eq(0.0);
 var mix_im = sin_dwa.add(sin_dwb).add(dw_im);
 var sin_dwa_dwb_im = mix_im.eq(3.0);
-var con_dwd_im = zero_im.where(tc_im.lte(-38.0), 1);
+var con_dwd_im = zero_im.where(tc_im.lt(-38.0), 1);
 var mix_im = con_dwd_im.add(sin_dwa_dwb_im);
 var dwd_im = mix_im.eq(2.0);
 
@@ -235,30 +236,30 @@ var mix_im = df_im.add(con_dfa);
 var dfa_im = mix_im.eq(2.0);
 
 //Dfb
-var sin_dfa = dfa_im.eq(0.0);
+var sin_dfa = dfa_im.eq(0.0); 
 var mix_im = sin_dfa.add(df_im).add(warm_mo_im);
 var dfb_im = mix_im.eq(3.0);
 
 //Dfc
-var sin_dfa = dfa_im.eq(0.0);
+var sin_dfa = dfa_im.eq(0.0); 
 var sin_dfb = dfb_im.eq(0.0);
 var mix_im = sin_dfa.add(sin_dfb).add(df_im);
 var sin_dfa_dfb_im = mix_im.eq(3.0);
-var con_dfc_im = zero_im.where(tc_im.gt(-38.0), 1);
+var con_dfc_im = zero_im.where(tc_im.gte(-38.0), 1);
 var mix_im = con_dfc_im.add(sin_dfa_dfb_im);
 var dfc_im = mix_im.eq(2.0);
 
 //Dfd
-var sin_dfa = dfa_im.eq(0.0);
+var sin_dfa = dfa_im.eq(0.0); 
 var sin_dfb = dfb_im.eq(0.0);
 var mix_im = sin_dfa.add(sin_dfb).add(df_im);
 var sin_dfa_dfb_im = mix_im.eq(3.0);
-var con_dfd_im = zero_im.where(tc_im.lte(-38.0), 1);
+var con_dfd_im = zero_im.where(tc_im.lt(-38.0), 1);
 var mix_im = con_dfd_im.add(sin_dfa_dfb_im);
 var dfd_im = mix_im.eq(2.0);
 
 //C
-var mix_im = e_im.add(b_im).add(d_im);
+var mix_im = e_im.add(b_im).add(d_im); 
 var sin_e_b_d_im = mix_im.eq(0.0);
 var con_c_im = zero_im.where(tc_im.lt(18.0), 1);
 var mix_im = sin_e_b_d_im.add(con_c_im);
@@ -271,7 +272,7 @@ var mix_im = c_im.add(cs_im).add(cw_im);
 var cf_im = mix_im.eq(1.0);
 
 //Csa
-var con_csa = zero_im.where(tw_im.gte(22.0), 1);
+var con_csa = zero_im.where(tw_im.gte(22.0), 1);  
 var mix_im = cs_im.add(con_csa);
 var csa_im = mix_im.eq(2.0);
 
@@ -281,12 +282,12 @@ var mix_im = sin_csa.add(cs_im).add(warm_mo_im);
 var csb_im = mix_im.eq(3.0);
 
 //Csc
-var sin_csa = csa_im.eq(0.0);
+var sin_csa = csa_im.eq(0.0); 
 var sin_csb = csb_im.eq(0.0);
 var mix_im = sin_csa.add(sin_csb).add(cs_im);
 var sin_csa_csb_im = mix_im.eq(3.0);
-var con_csc_im = zero_im.where(tc_im.gt(-38.0), 1);
-var mix_im = con_dsc_im.add(sin_csa_csb_im);
+var con_csc_im = zero_im.where(tc_im.gte(-38.0), 1);
+var mix_im = con_csc_im.add(sin_csa_csb_im);
 var csc_im = mix_im.eq(2.0);
 
 //Csd
@@ -294,7 +295,7 @@ var sin_csa = csa_im.eq(0.0);
 var sin_csb = csb_im.eq(0.0);
 var mix_im = sin_csa.add(sin_csb).add(cs_im);
 var sin_csa_csb_im = mix_im.eq(3.0);
-var con_csd_im = zero_im.where(tc_im.lte(-38.0), 1);
+var con_csd_im = zero_im.where(tc_im.lt(-38.0), 1);
 var mix_im = con_csd_im.add(sin_csa_csb_im);
 var csd_im = mix_im.eq(2.0);
 
@@ -313,7 +314,7 @@ var sin_cwa = cwa_im.eq(0.0);
 var sin_cwb = cwb_im.eq(0.0);
 var mix_im = sin_cwa.add(sin_cwb).add(cw_im);
 var sin_cwa_cwb_im = mix_im.eq(3.0);
-var con_cwc_im = zero_im.where(tc_im.gt(-38.0), 1);
+var con_cwc_im = zero_im.where(tc_im.gte(-38.0), 1);
 var mix_im = con_cwc_im.add(sin_cwa_cwb_im);
 var cwc_im = mix_im.eq(2.0);
 
@@ -322,7 +323,7 @@ var sin_cwa = cwa_im.eq(0.0);
 var sin_cwb = cwb_im.eq(0.0);
 var mix_im = sin_cwa.add(sin_cwb).add(cw_im);
 var sin_cwa_cwb_im = mix_im.eq(3.0);
-var con_cwd_im = zero_im.where(tc_im.lte(-38.0), 1);
+var con_cwd_im = zero_im.where(tc_im.lt(-38.0), 1);
 var mix_im = con_cwd_im.add(sin_cwa_cwb_im);
 var cwd_im = mix_im.eq(2.0);
 
@@ -332,7 +333,7 @@ var mix_im = cf_im.add(con_cfa);
 var cfa_im = mix_im.eq(2.0);
 
 //Cfb
-var sin_cfa = cfa_im.eq(0.0);
+var sin_cfa = cfa_im.eq(0.0);  
 var mix_im = sin_cfa.add(cf_im).add(warm_mo_im);
 var cfb_im = mix_im.eq(3.0);
 
@@ -341,16 +342,16 @@ var sin_cfa = cfa_im.eq(0.0);
 var sin_cfb = cfb_im.eq(0.0);
 var mix_im = sin_cfa.add(sin_cfb).add(cf_im);
 var sin_cfa_cfb_im = mix_im.eq(3.0);
-var con_cfc_im = zero_im.where(tc_im.gt(-38.0), 1);
+var con_cfc_im = zero_im.where(tc_im.gte(-38.0), 1);
 var mix_im = con_cfc_im.add(sin_cfa_cfb_im);
 var cfc_im = mix_im.eq(2.0);
 
 //Cfd
-var sin_cfa = cfa_im.eq(0.0);
+var sin_cfa = cfa_im.eq(0.0); 
 var sin_cfb = cfb_im.eq(0.0);
 var mix_im = sin_cfa.add(sin_cfb).add(cf_im);
 var sin_cfa_cfb_im = mix_im.eq(3.0);
-var con_cfd_im = zero_im.where(tc_im.lte(-38.0), 1);
+var con_cfd_im = zero_im.where(tc_im.lt(-38.0), 1);
 var mix_im = con_cfd_im.add(sin_cfa_cfb_im);
 var cfd_im = mix_im.eq(2.0);
 
@@ -360,26 +361,24 @@ var con_a_im = zero_im.where(tc_im.gte(18.0), 1);
 var mix_im = con_a_im.add(sin_b_im);
 var a_im = mix_im.eq(2.0);
 
-//Am
-var con_am_im = zero_im.where(pann_im.gte(ee.Image(ee.Image(pd_im.multiply(-1.0)).add(100.0)).multiply(25.0)), 1);
-var mix_im = con_am_im.add(a_im);
-var am_im = mix_im.eq(2.0);
-
 //Af
-var sin_am_im = con_am_im.eq(0.0);
 var con_af_im = zero_im.where(pd_im.gte(60.0), 1);
-var mix_im = con_af_im.add(sin_am_im).add(a_im);
-var af_im = mix_im.eq(3.0);
+var mix_im = con_af_im.add(a_im);
+var af_im = mix_im.eq(2.0);
 
-//As
-var con_as_im = zero_im.where(pd_im.lt(60.0), 1);
-var mix_im = con_as_im.add(sin_am_im).add(a_im).add(pd_in_summr_im);
-var as_im = mix_im.eq(4.0);
+//Am
+var sin_af_im = af_im.eq(0.0);
+var hundred_im = zero_im.where(pann_im.gte(0.0), 100.0);
+var con_am_im = zero_im.where(pd_im.gte(hundred_im.subtract(pann_im.divide(25.0))), 1);
+var mix_im = con_am_im.add(sin_af_im).add(a_im);
+var am_im = mix_im.eq(3.0);
 
 //Aw
-var con_aw_im = zero_im.where(pd_im.lt(60.0), 1);
-var mix_im = con_aw_im.add(sin_am_im).add(a_im).add(pd_in_wintr_im);
-var aw_im = mix_im.eq(4.0);
+var sin_af_im = af_im.eq(0.0);
+var hundred_im = zero_im.where(pann_im.gte(0.0), 100.0);
+var con_aw_im = zero_im.where(pd_im.lt(hundred_im.subtract(pann_im.divide(25.0))), 1);
+var mix_im = con_aw_im.add(sin_af_im).add(a_im);
+var aw_im = mix_im.eq(3.0);
 
 
 
