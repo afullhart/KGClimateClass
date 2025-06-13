@@ -8,6 +8,7 @@
 //otherwise, the summer and winter months would need to be flipped,
 //and the bounding box geometry changed to the southern hemisphere.
 var view_geo = ee.Geometry.BBox(-125.27099609375, 31.322948661948654, -103.38623046875, 41.711712192477044);
+Map.addLayer(view_geo, null, 'view_geo');
 
 var ic = ee.ImageCollection("WORLDCLIM/V1/MONTHLY");
 
@@ -110,7 +111,6 @@ var warm_mo_im = warm_mo_ct_im.gte(4);
 
 //E
 var e_im = tw_im.lte(10.0);
-Map.addLayer(e_im, {min:0, max:1, opacity:0.8}, 'e_im');
 
 //Et
 var con_et_im = tw_im.gt(0.0);
@@ -127,12 +127,10 @@ var sin_e_im = tw_im.gt(10.0);
 var con_b_im = zero_im.where(pann_im.lt(pthr_im.multiply(10.0)), 1);
 var mix_im = con_b_im.add(sin_e_im);
 var b_im = mix_im.eq(2.0);
-Map.addLayer(b_im, {min:0, max:1, opacity:0.8}, 'b_im');
 
 var con_bs_im = zero_im.where(pann_im.gte(pthr_im.multiply(5.0)), 1);
 var mix_im = b_im.add(con_bs_im);
 var bs_im = mix_im.eq(2.0);
-Map.addLayer(bs_im, {min:0, max:1, opacity:0.8}, 'bs_im');
 
 var con_bw_im = zero_im.where(pann_im.lt(pthr_im.multiply(5.0)), 1);
 var mix_im = b_im.add(con_bw_im);
@@ -148,7 +146,7 @@ var bsh_im = mix_im.eq(2.0);
 var con_bsk_im = zero_im.where(tann_im.lt(18.0), 1);
 var mix_im = bs_im.add(con_bsk_im);
 var bsk_im = mix_im.eq(2.0);
-Map.addLayer(bsk_im, {min:0, max:1, opacity:0.8}, 'bsk_im');
+
 
 
 //Bwh
@@ -447,7 +445,16 @@ var singleBandVis = {
   palette: typePalette
 };
 
-Map.addLayer(type_im, singleBandVis);
+Map.addLayer(e_im, {min:0, max:1, opacity:0.8}, 'e_im', false);
+Map.addLayer(b_im, {min:0, max:1, opacity:0.8}, 'b_im', false);
+Map.addLayer(bs_im, {min:0, max:1, opacity:0.8}, 'bs_im', false);
+Map.addLayer(bsk_im, {min:0, max:1, opacity:0.8}, 'bsk_im', false);
+Map.addLayer(type_im, singleBandVis, 'KCmap', false);
+
+var view_geo = ee.Geometry.BBox(-125.27099609375, 31.322948661948654, -103.38623046875, 41.711712192477044);
 
 
-Map.setCenter(-110, 35.5, 6);
+Map.setCenter(-115, 37, 6.49999999999);
+
+Map.addLayer(ee.Geometry.Point(-103.3, 31.25));
+
