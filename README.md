@@ -1,10 +1,10 @@
 # GEEKGCC
-GEEKGCC is a code base for calculating the Koppen-Geiger Climate Classification (KGCC), a widely used global climate classification, using the Google Earth Engine platform (gee). The inputs are long-term average monthly precipitation and temperature. A simple Earth Engine package using the Python API is available, as well as the code for a web-based demonstration using an Earth Engine hosted website:
+GEEKGCC is a code base for calculating the Koppen-Geiger Climate Classification (KGCC), a widely used global climate classification, using the Google Earth Engine API (gee). The inputs are long-term average monthly precipitation and temperature. A simple Earth Engine package using the Python gee API is available, as is the code for a web-based demonstration using an Earth Engine hosted website:
 
 https://deductive-water-293819.projects.earthengine.app/view/koppen-climate-map
 
 ## Description
-This Python-based package creates KGCC maps given monthly climate images prepared by the user. The required gee dependency is used to handle these images as Earth Engine image collection objects. Besides loading resulting KGCC maps to memory, the package can download KGCC geotif format maps to Google Drive, and additionally, when the geemap library is installed, the maps may be visualized. 
+This Python-based package creates KGCC maps given monthly climate images prepared by the user. The required gee dependency is used to handle these images as Earth Engine image collection objects. Besides loading resulting KGCC maps to memory, the package can download KGCC geotif format maps to Google Drive. Additionally, when the geemap library is installed, the maps may be visualized. 
 
 While this tool kit is useful for doing batch queries, a website for querying single locations can be accessed at: https://apps.tucson.ars.ag.gov/cligenpar
 
