@@ -9,10 +9,11 @@ This Python-based package creates KGCC maps given monthly climate images prepare
 While this tool kit is useful for doing batch queries, a website for querying single locations can be accessed at: https://apps.tucson.ars.ag.gov/cligenpar
 
 ## Requirements
+- Google Account
+- Google Earth Engine Account
 - Python 3.9 minimum
-- GDAL/osgeo library 3.10 minimum
-- Pandas library
-- Pyinstaller command-line tool (if creating exe)
+- earthengine-api
+- geemap (optional for visualization)
 
 ## Directory Setup
 ```bash
