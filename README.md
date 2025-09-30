@@ -15,29 +15,18 @@ While this tool kit is useful for doing batch queries, a website for querying si
 - earthengine-api
 - geemap (optional for visualization)
 
-## Directory Setup
+## Setup
+In Google Colab, all setup requirements are already met. The earthengine-api (ee) depency is automatically installed with geekgcc and Colab. When using Colab, prepend an exclamation mark (!) to the beginning of the following two code lines.
+**To install the geekgcc Python package using Git and Pip:**
 ```bash
--Current Working Dir CL_Tool.py
-   |--list.txt
-   |--search_stations.txt
-   |--pars
-       |--*.par
-   |--wind-strings
-       |--*.txt
-   |--CCSM4.gdb (at least one GDB needed)
-   |--CanESM2.gdb (at least one GDB needed)
-   |--MIROC5.gdb (at least one GDB needed)
-   |--classes
-       |--formatting.py
-       |--__init__.py
-   |--parfiles-2015
-       |--*.par
-   |--CL_Tool_Standalone.py (if running as Python script only)
-   |--CL_Tool.py (run with PyInstaller when compiling exe)
-   |--CL_Tool.exe (after compiling exe, move exe from dist folder to here)
-   |--build (created by PyInstaller when compiling exe, not needed after compiling)
-   |--dist (created by PyInstaller when compiling exe, not needed after compiling)
+git clone https://github.com/ARS-SWRC/GEE-KGCC
+pip install GEE-KGCC/geekgcc_package
 ```
+**To install the geekgcc Python package locally from a downloaded clone of the repository, use the following steps.** In an environment tool like conda, activate your python environment and navigate to the top of the geekgcc_package sub-directory, which should contain a .toml file. Then, run the following Pip command:
+```bash
+pip install .
+```
+
 ## User Inputs
 The user manually modifies `list.txt` with a list of lat/lon points to write *.par files to the `pars` folder for. The `list.txt` file has placeholder entries as examples, with resulting placeholder files inside `pars` and `wind-strings`. The SWPar4.5 dataset includes all required parameters except for wind parameter sets. In order to produce complete *.par files, an option is to put custom *.txt files inside `wind-strings` that contain formatted wind parameter text blocks, which may be taken from ground stations in `parfiles-2015`. It is then necessary to put the names of these *.txt files in `list.txt`. An easier option is using `Search` as the wind option in `list.txt`, which automatically uses wind parameter sets from the nearest station in `parfiles-2015`.
 
