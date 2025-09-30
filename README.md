@@ -30,7 +30,7 @@ pip install .
 https://geemap.org/
 
 **To authenticate ee and import necessary libraries, use the following steps.** Start by importing, authenticating, and initializing ee, then import geekgcc.
-```bash
+```python
 import ee
 #This will open a web browser for log-in steps.
 ee.Authenticate()
