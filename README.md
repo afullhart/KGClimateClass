@@ -29,6 +29,16 @@ pip install .
 **For visualization, additionally install the geemaps library. In Colab, this library is pre-installed.**
 https://geemap.org/
 
+**To authenticate ee and import necessary libraries, use the following steps.** Start by importing, authenticating, and initializing ee, then import geekgcc.
+```bash
+import ee
+#This will open a web browser for log-in steps.
+ee.Authenticate()
+geeusername = 'andrewfullhart' #Enter your GEE username.
+ee.Initialize(project='ee-' + geeusername)
+```
+The last line of code assumes the default project name assigned by Earth Engine. If some other project name is used, modify the code accordingly. The log-in steps in web browser may assist with the step of creating and choosing a project.
+
 ## User Inputs
 The user manually modifies `list.txt` with a list of lat/lon points to write *.par files to the `pars` folder for. The `list.txt` file has placeholder entries as examples, with resulting placeholder files inside `pars` and `wind-strings`. The SWPar4.5 dataset includes all required parameters except for wind parameter sets. In order to produce complete *.par files, an option is to put custom *.txt files inside `wind-strings` that contain formatted wind parameter text blocks, which may be taken from ground stations in `parfiles-2015`. It is then necessary to put the names of these *.txt files in `list.txt`. An easier option is using `Search` as the wind option in `list.txt`, which automatically uses wind parameter sets from the nearest station in `parfiles-2015`.
 
