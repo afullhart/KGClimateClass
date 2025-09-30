@@ -15,9 +15,9 @@ dl = False
 worldclim_path = 'WORLDCLIM/V1/MONTHLY'
 ic = ee.ImageCollection(worldclim_path)
 
-#Northern hemi-sphere
+#Northern hemisphere
 custom_geo = ee.Geometry.BBox(-180.00, 0.00, 179.99, 89.99)
-#Southern hemi-sphere
+#Southern hemisphere
 #custom_geo = ee.Geometry.BBox(-180.00, 0.00, 179.99, -89.99)
 
 def clip_fn(im_obj):
