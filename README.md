@@ -42,7 +42,11 @@ import geekgcc
 The the string argument for ee.Initialize() assumes the default project name assigned by Earth Engine. If some other project name is used, modify the code accordingly. The web browser log-in steps may assist with creating and choosing a project, or a project may be created using the online ee code editor.
 
 ## User Inputs
-The user manually modifies `list.txt` with a list of lat/lon points to write *.par files to the `pars` folder for. The `list.txt` file has placeholder entries as examples, with resulting placeholder files inside `pars` and `wind-strings`. The SWPar4.5 dataset includes all required parameters except for wind parameter sets. In order to produce complete *.par files, an option is to put custom *.txt files inside `wind-strings` that contain formatted wind parameter text blocks, which may be taken from ground stations in `parfiles-2015`. It is then necessary to put the names of these *.txt files in `list.txt`. An easier option is using `Search` as the wind option in `list.txt`, which automatically uses wind parameter sets from the nearest station in `parfiles-2015`.
+The user must provide ee image collections of long-term average monthly precipitation and temperature (12 images each). These should be overlapping images and should exist enitrely within a hemisphere (i.e., not in both hemispheres, such that at least two operations are needed to produce global coverage). WGS84 coordinate system is assumed in geekgcc, so climate images should be reprojected if they are in some other coordinate system.
+
+The following three methods are included in geekgcc: `classify()`, `download()`, and `get_vis_params`.
+
+
 
 Valid GCM strings:
 ```sh
