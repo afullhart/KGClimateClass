@@ -22,7 +22,7 @@ In Google Colab, all setup requirements are already met. The earthengine-api (ee
 git clone https://github.com/ARS-SWRC/GEE-KGCC
 pip install GEE-KGCC/geekgcc_package
 ```
-**To install the geekgcc Python package locally from a downloaded clone of the repository, use the following steps.** In an environment tool like conda, activate your python environment and navigate to the top of the geekgcc_package sub-directory, which should contain a .toml file. Then, run the following Pip command:
+**To install the geekgcc Python package locally from a downloaded clone of the repository, use the following steps.** In an environment tool like conda, activate your Python environment and navigate to the top of the geekgcc_package sub-directory, which should contain a .toml file. Then, run the following Pip command:
 ```bash
 pip install .
 ```
