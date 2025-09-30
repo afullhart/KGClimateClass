@@ -36,6 +36,8 @@ import ee
 ee.Authenticate()
 geeusername = 'andrewfullhart' #Enter your GEE username.
 ee.Initialize(project='ee-' + geeusername)
+#ee should be initialized before importing geekgcc.
+import geekgcc
 ```
 The last line of code assumes the default project name assigned by Earth Engine. If some other project name is used, modify the code accordingly. The web browser log-in steps may assist with creating and choosing a project, or a project may be created using the online ee code editor.
 
