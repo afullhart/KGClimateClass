@@ -1,4 +1,4 @@
-Hello, thanks for considering our paper. I hope it is within scope.
+Hello, thanks for considering our paper and we hope that it is within scope.
 
 **Suggested Reviewers**
 
@@ -11,7 +11,7 @@ This recently published GEE-related [paper](https://github.com/openjournals/joss
 
 [x] OSI-approved license
 [x] Installation instructions
-* The GitHub Repo has a section called Setup that provides instructions for installation and importing the developed package.
+* The GitHub Repo has a section called [Setup](https://github.com/ARS-SWRC/GEE-KGCC/tree/main?tab=readme-ov-file#setup) that provides instructions for installation and importing the developed package. The this header was used instead of "Installation Instructions" because it provides both installation and importing instructions. We can change this heading if necessary.
 
 [x] Documentation exists at all
 * The GitHub Repo has documentation for the developed package under [Usage Notes](https://github.com/ARS-SWRC/GEE-KGCC/tree/main?tab=readme-ov-file#usage-notes). Because the package has relatively few functions, there is room for this documentation.
