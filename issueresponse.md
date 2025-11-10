@@ -1,4 +1,4 @@
-Hello, thanks for considering our paper and we hope that it is within scope.
+Hello, thanks for considering our paper and we hope that it is within scope. I will provide details on suggested reviewers and remaining checklist items.
 
 **Suggested Reviewers**
 
@@ -11,10 +11,10 @@ This recently published GEE-related [paper](https://github.com/openjournals/joss
 
 [x] OSI-approved license
 [x] Installation instructions
-* The GitHub Repo has a section called [Setup](https://github.com/ARS-SWRC/GEE-KGCC/tree/main?tab=readme-ov-file#setup) that provides instructions for installation and importing the developed package. This header was used instead of "Installation Instructions" because it provides both installation and importing instructions. We can change this heading if necessary.
+* The GitHub Repo has a section called [Setup](https://github.com/ARS-SWRC/GEE-KGCC/tree/main?tab=readme-ov-file#setup) that provides instructions for installation and importing the developed package. This heading was used instead of "Installation Instructions" because both installation and importing instructions are provided. We can change this heading title if necessary.
 
 [x] Documentation exists at all
-* The GitHub Repo has documentation for the developed package under [Usage Notes](https://github.com/ARS-SWRC/GEE-KGCC/tree/main?tab=readme-ov-file#usage-notes). Because the package has relatively few functions, there is room for this documentation.
+* The GitHub Repo has documentation for the developed package under [Usage Notes](https://github.com/ARS-SWRC/GEE-KGCC/tree/main?tab=readme-ov-file#usage-notes). Because the package has relatively few functions, there is room for this documentation in the ReadMe document.
 
 [x] Tests of some sort
 * The [Test Example](https://github.com/ARS-SWRC/GEE-KGCC/tree/main?tab=readme-ov-file#test-example) is a python notebook that may be used for testing. In this case, because manual GEE authentication steps are already necessary in order to import the package, we opted to make the the entire test a manual test instead of automatic.
