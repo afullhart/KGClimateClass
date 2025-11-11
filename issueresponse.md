@@ -1,4 +1,4 @@
-Hello, thanks for considering our paper and we hope that it is within scope. I will provide details on suggested reviewers and remaining checklist items. At this stage, I'm unclear whether I should attempt to correct the remaining issues with the paper (a few issues have been realized, listed below). For now, I'll leave as is.
+Hello, thanks for considering our paper and we hope that it is within scope. I will provide details on suggested reviewers and remaining checklist items. At this stage, I'm unclear whether I should attempt to correct the remaining issues with the paper (a few issues listed below have been realized). For now, I'll leave as is.
 
 **Suggested Reviewers**
 
